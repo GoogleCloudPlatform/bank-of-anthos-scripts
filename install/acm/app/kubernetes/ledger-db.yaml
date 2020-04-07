@@ -1,0 +1,76 @@
+# Copyright 2020 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ledger-db
+  annotations:
+    configmanagement.gke.io/cluster-selector: onprem
+spec:
+  selector:
+    matchLabels:
+      app: ledger-db
+  template:
+    metadata:
+      labels:
+        app: ledger-db
+    spec:
+      containers:
+      - name: redis
+        image: gcr.io/bank-of-anthos/ledger-db
+        ports:
+        - containerPort: 6379
+        # readinessProbe:
+        #   periodSeconds: 5
+        #   tcpSocket:
+        #     port: 6379
+        # livenessProbe:
+        #   periodSeconds: 5
+        #   tcpSocket:
+        #     port: 6379
+        volumeMounts:
+        - mountPath: /data
+          name: redis-data
+        env:
+        - name: USE_DEFAULT_DATA
+          value: "True"
+        - name: LOCAL_ROUTING_NUM
+          value: "123456789"
+        - name: DEFAULT_ACCOUNT
+          value: "7673361018"
+        - name: DEFAULT_DEPOSIT_ACCOUNT
+          value: "0123456789"
+        - name: DEFAULT_DEPOSIT_ROUTING
+          value: "111111111"
+        resources:
+          limits:
+            cpu: 125m
+          requests:
+            cpu: 70m
+      volumes:
+      - name: redis-data
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ledger-db
+spec:
+  type: ClusterIP
+  selector:
+    app: ledger-db
+  ports:
+  - name: redis
+    port: 6379
+    targetPort: 6379
