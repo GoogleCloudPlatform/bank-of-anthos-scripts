@@ -1,4 +1,4 @@
-# Copyright 2020 Google LLC
+# Copyright 2019 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -27,29 +28,25 @@ spec:
         app: contacts
     spec:
       terminationGracePeriodSeconds: 5
-      # initContainers:
-      # - name: init-db-ready
-      #   image: mongo:4
-      #   command: ['/bin/sh', '-c']
-      #   args: ["until (mongo --host accounts-db:27017 >/dev/null) do echo 'Waiting for connection for 2 sec.'; sleep 2; done"]
       containers:
       - name: contacts
-        image: gcr.io/bank-of-anthos/contacts
+        image: gcr.io/bank-of-anthos/contacts:v0.1.0
         volumeMounts:
         - name: publickey
           mountPath: "/root/.ssh"
           readOnly: true
         env:
         - name: VERSION
-          value: "0.1.0"
+          value: "v0.1.0"
         - name: PORT
           value: "8080"
-        - name: ACCOUNTS_DB_ADDR
-          value: "accounts-db:27017"
         - name: LOCAL_ROUTING_NUM
           value: "123456789"
         - name: PUB_KEY_PATH
           value: "/root/.ssh/publickey"
+        envFrom:
+        - configMapRef:
+            name: accounts-db-config
         resources:
           requests:
             cpu: 200m
@@ -57,12 +54,12 @@ spec:
           limits:
             cpu: 300m
             memory: 128Mi
-        # readinessProbe:
-        #   httpGet:
-        #     path: /ready
-        #     port: 8080
-        #   initialDelaySeconds: 5
-        #   periodSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
       volumes:
       - name: publickey
         secret:
@@ -75,6 +72,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name: contacts
+  annotations:
+    configmanagement.gke.io/cluster-selector: gcp
 spec:
   type: ClusterIP
   selector:

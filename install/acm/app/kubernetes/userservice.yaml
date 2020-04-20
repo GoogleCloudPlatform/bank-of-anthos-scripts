@@ -1,4 +1,4 @@
-# Copyright 2020 Google LLC
+# Copyright 2019 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -27,14 +28,9 @@ spec:
         app: userservice
     spec:
       terminationGracePeriodSeconds: 5
-      # initContainers:
-      # - name: init-db-ready
-      #   image: mongo:4
-      #   command: ['/bin/sh', '-c']
-      #   args: ["until (mongo --host accounts-db:27017 >/dev/null) do echo 'Waiting for connection for 2 sec.'; sleep 2; done"]
       containers:
       - name: userservice
-        image: gcr.io/bank-of-anthos/userservice
+        image: gcr.io/bank-of-anthos/userservice:v0.1.0
         volumeMounts:
         - name: keys
           mountPath: "/root/.ssh"
@@ -44,23 +40,24 @@ spec:
           containerPort: 8080
         env:
         - name: VERSION
-          value: "0.1.0"
+          value: "v0.1.0"
         - name: PORT
           value: "8080"
-        - name: ACCOUNTS_DB_ADDR
-          value: "accounts-db:27017"
         - name: TOKEN_EXPIRY_SECONDS
           value: "3600"
         - name: PRIV_KEY_PATH
           value: "/root/.ssh/privatekey"
         - name: PUB_KEY_PATH
           value: "/root/.ssh/privatekey"
-        # readinessProbe:
-        #   httpGet:
-        #     path: /ready
-        #     port: 8080
-        #   initialDelaySeconds: 5
-        #   periodSeconds: 5
+        envFrom:
+        - configMapRef:
+            name: accounts-db-config
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
       volumes:
       - name: keys
         secret:
@@ -77,6 +74,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name: userservice
+  annotations:
+    configmanagement.gke.io/cluster-selector: gcp
 spec:
   type: ClusterIP
   selector:

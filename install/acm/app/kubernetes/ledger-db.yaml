@@ -1,4 +1,4 @@
-# Copyright 2020 Google LLC
+# Copyright 2019 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -27,50 +28,51 @@ spec:
         app: ledger-db
     spec:
       containers:
-      - name: redis
-        image: gcr.io/bank-of-anthos/ledger-db
-        ports:
-        - containerPort: 6379
-        # readinessProbe:
-        #   periodSeconds: 5
-        #   tcpSocket:
-        #     port: 6379
-        # livenessProbe:
-        #   periodSeconds: 5
-        #   tcpSocket:
-        #     port: 6379
-        volumeMounts:
-        - mountPath: /data
-          name: redis-data
-        env:
-        - name: USE_DEFAULT_DATA
-          value: "True"
-        - name: LOCAL_ROUTING_NUM
-          value: "123456789"
-        - name: DEFAULT_ACCOUNT
-          value: "7673361018"
-        - name: DEFAULT_DEPOSIT_ACCOUNT
-          value: "0123456789"
-        - name: DEFAULT_DEPOSIT_ROUTING
-          value: "111111111"
-        resources:
-          limits:
-            cpu: 125m
-          requests:
-            cpu: 70m
-      volumes:
-      - name: redis-data
-        emptyDir: {}
+        - name: postgres
+          image: gcr.io/bank-of-anthos/ledger-db:v0.1.0
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - containerPort: 5432
+          env:
+            - name: USE_DEFAULT_DATA
+              value: "True"
+            - name: LOCAL_ROUTING_NUM
+              value: "123456789"
+            - name: DEFAULT_ACCOUNT
+              value: "7595821437"
+            - name: DEFAULT_DEPOSIT_ACCOUNT
+              value: "6029390231"
+            - name: DEFAULT_DEPOSIT_ROUTING
+              value: "295164083"
+          envFrom:
+            - configMapRef:
+                name: ledger-db-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ledger-db-config
+  labels:
+    app: postgres
+data:
+  POSTGRES_DB: postgresdb
+  POSTGRES_USER: admin
+  POSTGRES_PASSWORD: password
+  SPRING_DATASOURCE_URL: jdbc:postgresql://ledger-db:5432/postgresdb
+  SPRING_DATASOURCE_USERNAME: admin # should match POSTGRES_USER
+  SPRING_DATASOURCE_PASSWORD: password # should match POSTGRES_PASSWORD
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: ledger-db
+  annotations:
+    configmanagement.gke.io/cluster-selector: onprem
 spec:
   type: ClusterIP
   selector:
     app: ledger-db
   ports:
-  - name: redis
-    port: 6379
-    targetPort: 6379
+  - name: postgres
+    port: 5432
+    targetPort: 5432

@@ -1,4 +1,4 @@
-# Copyright 2020 Google LLC
+# Copyright 2019 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -29,7 +30,7 @@ spec:
       terminationGracePeriodSeconds: 5
       containers:
       - name: front
-        image: gcr.io/bank-of-anthos/frontend
+        image: gcr.io/bank-of-anthos/frontend:v0.1.0
         volumeMounts:
         - name: publickey
           mountPath: "/root/.ssh"
@@ -54,15 +55,15 @@ spec:
         - name: PUB_KEY_PATH
           value: "/root/.ssh/publickey"
         - name: DEFAULT_USERNAME
-          value: "testuser123"
+          value: "testuser"
         - name: DEFAULT_PASSWORD
           value: "password"
-        # readinessProbe:
-        #   httpGet:
-        #     path: /ready
-        #     port: 8080
-        #   initialDelaySeconds: 5
-        #   periodSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
       volumes:
       - name: publickey
         secret:
@@ -75,8 +76,10 @@ apiVersion: v1
 kind: Service
 metadata:
   name: frontend
+  annotations:
+    configmanagement.gke.io/cluster-selector: gcp
 spec:
-  type: ClusterIP
+  type: LoadBalancer
   selector:
     app: frontend
   ports:

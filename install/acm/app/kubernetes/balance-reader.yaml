@@ -1,4 +1,4 @@
-# Copyright 2020 Google LLC
+# Copyright 2019 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -27,55 +28,51 @@ spec:
         app: balancereader
     spec:
       terminationGracePeriodSeconds: 5
-      # initContainers:
-      # - name: init-db-ready
-      #   image:  redis:alpine
-      #   command: ['/bin/sh', '-c']
-      #   args:
-      #     - for i in {1..100}; do sleep 1; if redis-cli -h ledger-db -p 6379 ping; then exit 0; fi; done; exit 1
       containers:
       - name: reader
-        image: gcr.io/bank-of-anthos/balancereader
+        image: gcr.io/bank-of-anthos/balancereader:v0.1.0
         volumeMounts:
         - name: publickey
           mountPath: "/root/.ssh"
           readOnly: true
         env:
         - name: VERSION
-          value: "0.1.0"
-        - name: LEDGER_ADDR
-          value: "ledger-db.fsi.svc.cluster.local"
-        - name: LEDGER_PORT
-          value: "6379"
-        - name: LEDGER_STREAM
-          value: "ledger"
+          value: "v0.1.0"
         - name: PORT
           value: "8080"
         - name: LOCAL_ROUTING_NUM
           value: "123456789"
         - name: PUB_KEY_PATH
           value: "/root/.ssh/publickey"
+        - name: POLL_MS
+          value: "100"
+        - name: CACHE_SIZE
+          value: "1000000"
         # tell Java to obey container memory limits
         - name: JVM_OPTS
           value: "-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
+        envFrom:
+        # add ledger-db credentials from ConfigMap
+        - configMapRef:
+            name: ledger-db-config
         resources:
           requests:
             cpu: 200m
             memory: 256Mi
           limits:
             cpu: 300m
-        # readinessProbe:
-        #   httpGet:
-        #     path: /ready
-        #     port: 8080
-        #   initialDelaySeconds: 5
-        #   periodSeconds: 5
-        # livenessProbe:
-        #   httpGet:
-        #     path: /healthy
-        #     port: 8080
-        #   initialDelaySeconds: 60
-        #   periodSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /healthy
+            port: 8080
+          initialDelaySeconds: 120
+          periodSeconds: 5
       volumes:
       - name: publickey
         secret:
@@ -88,6 +85,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name: balancereader
+  annotations:
+    configmanagement.gke.io/cluster-selector: onprem
 spec:
   type: ClusterIP
   selector:

@@ -1,4 +1,4 @@
-# Copyright 2020 Google LLC
+# Copyright 2019 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 kind: Deployment
 apiVersion: apps/v1
 metadata:
@@ -33,22 +34,49 @@ spec:
         tier: db
     spec:
       containers:
-        - name: mongo
-          image: gcr.io/bank-of-anthos/accounts-db
-          ports:
-            - containerPort: 27017
+      - name: accounts-db
+        image: gcr.io/bank-of-anthos/accounts-db:v0.1.0
+        env:
+        - name: LOCAL_ROUTING_NUM
+          value: "123456789"
+        - name: TEST_ACCOUNTID
+          value: "7595821437"
+        - name: TEST_USERNAME
+          value: "testuser"
+        envFrom:
+          - configMapRef:
+              name: accounts-db-config
+        ports:
+          - containerPort: 5432
+            name: postgredb
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: accounts-db
+  annotations:
+    configmanagement.gke.io/cluster-selector: gcp
   labels:
     app: accounts-db
     tier: db
 spec:
   ports:
-    - port: 27017
-      targetPort: 27017
+    - port: 5432
+      name: postgredb
+      targetPort: 5432
+      protocol: TCP
   selector:
     app: accounts-db
     tier: db
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: accounts-db-config
+  labels:
+    app: accounts-db
+data:
+  POSTGRES_DB: accounts-db
+  POSTGRES_USER: accounts-admin
+  POSTGRES_PASSWORD: accounts-pwd
+  ACCOUNTS_DB_URI: postgresql://accounts-admin:accounts-pwd@accounts-db:5432/accounts-db
