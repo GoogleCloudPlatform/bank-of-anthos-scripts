@@ -17,7 +17,6 @@
 # Variables
 export PROJECT=$(gcloud config get-value project)
 export WORK_DIR=${WORK_DIR:="${PWD}/workdir"}
-export ISTIO_VERSION="1.5.2"
 
 ## Install Tools
 mkdir -p $WORK_DIR/bin
@@ -30,12 +29,6 @@ echo "### "
 curl -sLO https://raw.githubusercontent.com/ahmetb/kubectx/master/kubectx
 chmod +x kubectx
 mv kubectx $WORK_DIR/bin
-
-# Install istio
-curl -L https://git.io/getLatestIstio | ISTIO_VERSION=$ISTIO_VERSION sh -
-cp istio-$ISTIO_VERSION/bin/istioctl $WORK_DIR/bin/.
-mv istio-$ISTIO_VERSION $WORK_DIR/
-
 
 # Install Kops
 curl -sLO https://github.com/kubernetes/kops/releases/download/$(curl -s https://api.github.com/repos/kubernetes/kops/releases/latest | grep tag_name | cut -d '"' -f 4)/kops-linux-amd64
