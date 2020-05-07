@@ -18,7 +18,6 @@ metadata:
     namespace: config-management-system
 spec:
   clusterName: <CLUSTER_NAME>
-  channel: dev
   policyController:
     enabled: true
   git:
