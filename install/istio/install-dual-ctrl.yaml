@@ -57,37 +57,37 @@ spec:
         enabled: true
 
       controlPlaneSecurityEnabled: true
-      telemetry:
+    telemetry:
+      enabled: true
+      v1:
+        enabled: false
+      v2:
         enabled: true
-        v1:
-          enabled: false
-        v2:
+        prometheus:
           enabled: true
-          prometheus:
-            enabled: true
+        stackdriver:
+          configOverride: {}
+          enabled: true
+          logging: true
+          monitoring: true
+          topology: true
+    tracing:
+      ingress:
+        enabled: false
+      jaeger:
+        accessMode: ReadWriteMany
+        hub: docker.io/jaegertracing
+        memory:
+          max_traces: 50000
+        persist: false
+        spanStorageType: badger
+        storageClassName: ""
+        tag: "1.16"
+      nodeSelector: {}
+      opencensus:
+        exporters:
           stackdriver:
-            configOverride: {}
-            enabled: true
-            logging: true
-            monitoring: true
-            topology: true
-      tracing:
-        ingress:
-          enabled: false
-        jaeger:
-          accessMode: ReadWriteMany
-          hub: docker.io/jaegertracing
-          memory:
-            max_traces: 50000
-          persist: false
-          spanStorageType: badger
-          storageClassName: ""
-          tag: "1.16"
-        nodeSelector: {}
-        opencensus:
-          exporters:
-            stackdriver:
-              enable_tracing: true
+            enable_tracing: true
     # Multicluster with gateways requires a root CA
     # Cluster local CAs are bootstrapped with the root CA.
     security:
