@@ -53,8 +53,8 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
     ./common/connect-kops-remote.sh
 
     # install service mesh: Istio, replicated control plane multicluster
-    CONTEXT="gcp" ./istio/install.sh
-    CONTEXT="onprem" ./istio/install.sh
+    CONTEXT="gcp" ./istio/install_istio.sh
+    CONTEXT="onprem" ./istio/install_istio.sh
 
     # configure DNS stubdomains for cross-cluster service name resolution
     ./istio/coredns.sh
