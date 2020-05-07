@@ -61,3 +61,5 @@ gcloud container hub memberships register ${CLUSTER_NAME} \
    --project=${PROJECT_ID} \
    --gke-cluster="${CLUSTER_ZONE}/${CLUSTER_NAME}" \
    --service-account-key-file=${LOCAL_KEY_PATH}
+
+echo "✅ Done"

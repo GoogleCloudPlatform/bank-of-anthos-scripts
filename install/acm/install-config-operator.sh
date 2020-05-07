@@ -17,7 +17,7 @@
 echo "### "
 echo "### Begin install config manager"
 echo "### "
-gsutil cp gs://config-management-release/released/latest/config-management-operator.yaml config-management-operator.yaml
+gsutil cp gs://config-management-release/released/1.3.1/config-management-operator.yaml config-management-operator.yaml
 kubectl apply -f config-management-operator.yaml
 rm config-management-operator.yaml
 
