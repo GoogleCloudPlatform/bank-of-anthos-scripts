@@ -17,7 +17,7 @@
 # Variables
 export PROJECT=$(gcloud config get-value project)
 export WORK_DIR=${WORK_DIR:="${PWD}/workdir"}
-export ISTIO_VERSION="1.4.7"
+export ISTIO_VERSION="1.5.2"
 
 ## Install Tools
 mkdir -p $WORK_DIR/bin
