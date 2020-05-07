@@ -84,7 +84,7 @@ kind: Service
 metadata:
   name: balancereader
   annotations:
-    configmanagement.gke.io/cluster-selector: gcp
+    configmanagement.gke.io/cluster-selector: onprem
 spec:
   type: ClusterIP
   selector:
