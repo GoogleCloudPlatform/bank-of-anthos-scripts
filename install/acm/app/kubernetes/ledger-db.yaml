@@ -70,6 +70,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name: ledger-db
+  annotations:
+    configmanagement.gke.io/cluster-selector: onprem
 spec:
   type: ClusterIP
   selector:
