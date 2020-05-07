@@ -45,8 +45,12 @@ spec:
             - name: DEFAULT_DEPOSIT_ROUTING
               value: "295164083"
           envFrom:
-            - configMapRef:
-                name: ledger-db-config
+          - configMapRef:
+              name: environment-config
+          - configMapRef:
+              name: ledger-db-config
+          - configMapRef:
+              name: default-data-config
 ---
 apiVersion: v1
 kind: ConfigMap
