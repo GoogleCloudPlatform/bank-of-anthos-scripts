@@ -1,4 +1,4 @@
-# Copyright 2020 Google LLC
+# Copyright 2019 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -30,34 +30,31 @@ spec:
       terminationGracePeriodSeconds: 5
       containers:
       - name: front
-        image: gcr.io/bank-of-anthos/frontend:v0.1.0
+        image: gcr.io/bank-of-anthos/frontend:v0.1.2
         volumeMounts:
         - name: publickey
           mountPath: "/root/.ssh"
           readOnly: true
         env:
         - name: VERSION
-          value: "0.1.0"
+          value: "v0.1.2"
         - name: PORT
           value: "8080"
-        - name: TRANSACTIONS_API_ADDR
-          value: "ledgerwriter.fsi.global:8080"
-        - name: BALANCES_API_ADDR
-          value: "balancereader.fsi.global:8080"
-        - name: HISTORY_API_ADDR
-          value: "transactionhistory.fsi.global:8080"
-        - name: CONTACTS_API_ADDR
-          value: "contacts.fsi.svc.cluster.local:8080"
-        - name: USERSERVICE_API_ADDR
-          value: "userservice.fsi.svc.cluster.local:8080"
-        - name: LOCAL_ROUTING_NUM
-          value: "123456789"
-        - name: PUB_KEY_PATH
-          value: "/root/.ssh/publickey"
         - name: DEFAULT_USERNAME
-          value: "testuser"
+          valueFrom:
+            configMapKeyRef:
+              name: default-data-config
+              key: DEFAULT_USER_USERNAME
         - name: DEFAULT_PASSWORD
-          value: "password"
+          valueFrom:
+            configMapKeyRef:
+              name: default-data-config
+              key: DEFAULT_LOGIN_PASSWORD
+        envFrom:
+        - configMapRef:
+            name: environment-config
+        - configMapRef:
+            name: service-api-config
         readinessProbe:
           httpGet:
             path: /ready
@@ -79,7 +76,7 @@ metadata:
   annotations:
     configmanagement.gke.io/cluster-selector: gcp
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   selector:
     app: frontend
   ports:

@@ -6,6 +6,3 @@ export PATH=$PATH:$WORK_DIR/bin:
 
 # Install Tree
 sudo apt-get install tree
-
-source $BASE_DIR/common/manage-state.sh
-load_state
