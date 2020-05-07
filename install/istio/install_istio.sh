@@ -45,6 +45,7 @@ kubectl create secret generic cacerts -n istio-system \
     --from-file=samples/certs/ca-key.pem \
     --from-file=samples/certs/root-cert.pem \
     --from-file=samples/certs/cert-chain.pem
+# cd back into install/
 cd ../
 
 kubectl label namespace default istio-injection=enabled
@@ -54,5 +55,5 @@ kubectl create clusterrolebinding cluster-admin-binding \
 
 
 # install using operator config - https://istio.io/docs/setup/install/istioctl/#customizing-the-configuration
-INSTALL_PROFILE="install-dual-ctrl.yaml"
+INSTALL_PROFILE="istio/install-dual-ctrl.yaml"
 ./istio-${ISTIO_VERSION}/bin/istioctl manifest apply -f ${INSTALL_PROFILE}
