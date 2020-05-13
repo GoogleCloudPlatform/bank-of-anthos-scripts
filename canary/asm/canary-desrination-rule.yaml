@@ -3,7 +3,7 @@ kind: DestinationRule
 metadata:
   name: transactionhistory
 spec:
-  host: transactionhistory.fsi.global
+  host: transactionhistory
   subsets:
   - name: v1
     labels:

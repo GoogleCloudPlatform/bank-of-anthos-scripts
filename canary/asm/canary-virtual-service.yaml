@@ -4,14 +4,14 @@ metadata:
   name: transactionhistory
 spec:
   hosts:
-  - transactionhistory.fsi.global
+  - transactionhistory
   http:
   - route:
     - destination:
-        host: transactionhistory.fsi.global
+        host: transactionhistory
         subset: v1
       weight: 90
     - destination:
-        host: transactionhistory.fsi.global
+        host: transactionhistory
         subset: v2
       weight: 10
