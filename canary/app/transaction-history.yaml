@@ -38,7 +38,7 @@ spec:
           readOnly: true
         env:
         - name: VERSION
-          value: "v0.1.2"
+          value: "v1"
         - name: PORT
           value: "8080"
         - name: POLL_MS
@@ -85,3 +85,18 @@ spec:
           items:
           - key: jwtRS256.key.pub
             path: publickey
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: transactionhistory
+  annotations:
+    configmanagement.gke.io/cluster-selector: onprem
+spec:
+  type: ClusterIP
+  selector:
+    app: transactionhistory
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
