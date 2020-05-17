@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: service-api-config
+  annotations:
+    configmanagement.gke.io/cluster-selector: onprem
+data:
+  TRANSACTIONS_API_ADDR: "ledgerwriter.fsi.svc.cluster.local:8080"
+  BALANCES_API_ADDR: "balancereader.fsi.svc.cluster.local:8080"
+  HISTORY_API_ADDR: "transactionhistory.fsi.svc.cluster.local:8080"
+  CONTACTS_API_ADDR: "contacts.fsi.svc.cluster.local:8080"
+  USERSERVICE_API_ADDR: "userservice.fsi.svc.cluster.local:8080"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: default-data-config
+data:
+  USE_DEFAULT_DATA: "True"
+  # All default user accounts are hardcoded to use the login password 'password'
+  DEFAULT_LOGIN_PASSWORD: "password"
+  DEFAULT_USER_ACCOUNT: "1033623433"
+  DEFAULT_USER_USERNAME: "testuser"
+  DEFAULT_USER_NAME: "Eve"
+  DEFAULT_DEPOSIT_ACCOUNT: "9099791699"
+  DEFAULT_DEPOSIT_ROUTING: "808889588"
+  DEFAULT_DEPOSIT_LABEL: "External Bank"
+  DEFAULT_CONTACT_ACCOUNT_A: "1044226144"
+  DEFAULT_CONTACT_NAME_A: "Alice"
+  DEFAULT_CONTACT_ACCOUNT_B: "1055757655"
+  DEFAULT_CONTACT_NAME_B: "Bob"
