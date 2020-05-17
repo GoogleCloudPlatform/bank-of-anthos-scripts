@@ -14,7 +14,7 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: fsi
+  name: boa
   labels:
     env: istio
     istio-injection: enabled
