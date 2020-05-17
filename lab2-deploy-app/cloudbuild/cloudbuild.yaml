@@ -1,6 +1,9 @@
 steps:
 - name: gcr.io/cloud-builders/gcloud
   entrypoint: 'bash'
+  volumes:
+  - name: 'kubeconfig'
+    path: '/.kube/'
   args: [ '-c', 'gcloud secrets versions access latest --secret=onprem-context > /.kube/config' ]
   env:
   - 'PROJECT=megandemo'
