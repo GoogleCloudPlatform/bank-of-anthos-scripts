@@ -5,9 +5,9 @@ steps:
   env:
   - 'PROJECT=megandemo'
 - name: bitnami/kubectl:latest
-  # volumes:
-  # - name: '/.kube/config'
-  #   path: ' /boa/onprem.context'
+  volumes:
+  - name: 'kubeconfig'
+    path: '/.kube/config'
   args: ['apply', '-f', 'https://raw.githubusercontent.com/GoogleCloudPlatform/microservices-demo/master/release/kubernetes-manifests.yaml']
   env:
   - 'PROJECT=megandemo'
