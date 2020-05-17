@@ -70,6 +70,11 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
     ./gke/connect-hub.sh
     ./kops/connect-hub.sh
 
+
+    # run kops firewall writer (enforcer workaround) as a background docker container
+
+
+
 else
     echo "This has only been tested in GCP Cloud Shell.  Only Linux (debian) is supported".
 fi

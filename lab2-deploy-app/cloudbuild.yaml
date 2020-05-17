@@ -11,14 +11,14 @@ steps:
   args:
     - "apply"
     - "-f"
-    - "./onprem/"
+    - "./onprem"
 # Deploy the gcp/ manifests to the GKE gcp cluster
 - name: "gcr.io/cloud-builders/kubectl"
   id: 'Deploy to gcp'
   args:
     - "apply"
     - "-f"
-    - "./gcp/"
+    - "./gcp"
   env:
     - "CLOUDSDK_CORE_PROJECT=${PROJECT_ID}"
     - "CLOUDSDK_COMPUTE_REGION=us-central1-b"
