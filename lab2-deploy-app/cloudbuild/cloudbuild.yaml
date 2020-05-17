@@ -1,16 +1,11 @@
 steps:
 - name: gcr.io/cloud-builders/gcloud
   entrypoint: 'bash'
-  volumes:
-  - name: 'kubeconfig'
-    path: '/.kube/'
-  args: [ '-c', 'gcloud secrets versions access latest --secret=onprem-context > /.kube/config' ]
+  args: [ '-c', 'gcloud secrets versions access latest --secret=onprem-context > /workspace/onprem.context' ]
   env:
   - 'PROJECT=megandemo'
 - name: bitnami/kubectl:latest
-  volumes:
-  - name: 'kubeconfig'
-    path: '/.kube/'
-  args: ['apply', '-f', 'https://raw.githubusercontent.com/GoogleCloudPlatform/microservices-demo/master/release/kubernetes-manifests.yaml']
   env:
+  - 'KUBECONFIG=/workspace/onprem.context'
   - 'PROJECT=megandemo'
+  args: ['apply', '-f', 'https://raw.githubusercontent.com/GoogleCloudPlatform/microservices-demo/master/release/kubernetes-manifests.yaml']
