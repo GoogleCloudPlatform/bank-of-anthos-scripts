@@ -3,3 +3,4 @@ tmp/
 installer/
 istio-1.*/
 *.context
+lab1-install/kops/workdir

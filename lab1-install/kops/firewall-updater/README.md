@@ -6,9 +6,9 @@ A python script that continuously updates the https Kops firewall rule to allow 
 
 1. Create a service account for the updater - give it `firewall admin` permissions
 
-2. Download service account key
+2. Download service account key to your local environment.
 
-3. Set `SERVICE_ACCOUNT` env var to the absolute local path of your service account key
+3. `export SERVICE_ACCOUNT=/path/to/key.json`
 
 4. Run the updater locally with docker
 ```

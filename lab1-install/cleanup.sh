@@ -45,6 +45,9 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
     # Delete target-pools created by Istio ingress gateway on remote cluster
     gcloud compute target-pools delete $(gcloud compute target-pools list --format="value(name)") --region us-central1 --quiet
 
+    # Stop firewall rule updater (docker)
+    ./kops/stop-firewall-updater.sh
+
     # Delete firewall rule for remote cluster node 10256 and istio ingress gateway
     gcloud compute firewall-rules delete \
 	$(gcloud compute firewall-rules list --format="table(name,targetTags.list():label=TARGET_TAGS)" | \
