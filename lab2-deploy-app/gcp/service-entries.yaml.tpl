@@ -5,7 +5,7 @@ metadata:
   namespace: boa
 spec:
   hosts:
-  - balancereader.fsi.global
+  - balancereader.boa.global
   location: MESH_INTERNAL
   ports:
   - name: http1
@@ -26,7 +26,7 @@ metadata:
   namespace: boa
 spec:
   hosts:
-  - ledgerwriter.fsi.global
+  - ledgerwriter.boa.global
   location: MESH_INTERNAL
   ports:
   - name: http1
@@ -47,7 +47,7 @@ metadata:
   namespace: boa
 spec:
   hosts:
-  - transactionhistory.fsi.global
+  - transactionhistory.boa.global
   location: MESH_INTERNAL
   ports:
   - name: http1

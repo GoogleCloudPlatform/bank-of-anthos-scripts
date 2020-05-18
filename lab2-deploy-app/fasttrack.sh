@@ -27,10 +27,14 @@ gcloud source repos create ${REPO_NAME}
 echo "🏠 Setting up local repo"
 cd $HOME
 mkdir ${REPO_NAME}
+cd ${REPO_NAME}
 git init
-git remote remove origin
 git config credential.helper gcloud.sh
 git remote add origin $PROJECT_REPO_URL
+
+touch "helloworld.txt"
+git add .
+git commit -m "init app repo"
 git push -u origin master -f
 
 echo "🔄 Creating a Cloud Build trigger for app repo"
@@ -40,6 +44,8 @@ gcloud beta builds triggers create cloud-source-repositories \
 --build-config="cloudbuild.yaml"
 
 echo "🏗 Copying cloudbuild.yaml into app repo"
+rm ${HOME}/${REPO_NAME}/helloworld.txt
+cd ${HOME}/bank-of-anthos-scripts/lab2-deploy-app
 cp ./cloudbuild.yaml ${HOME}/${REPO_NAME}
 
 echo "⛵️ Generating Istio service entries for gcp cluster"
@@ -47,12 +53,16 @@ GWIP_ONPREM=$(kubectl --context=onprem get -n istio-system service istio-ingress
 sed 's/GWIP_ONPREM/'$GWIP_ONPREM'/g' gcp/service-entries.yaml.tpl > gcp/service-entries.yaml
 
 echo "🏦 Copying Bank of Anthos manifests into app repo"
-cp gcp/ ${HOME}/${REPO_NAME}
-cp onprem ${HOME}/${REPO_NAME}
+mkdir -p ${HOME}/${REPO_NAME}/gcp
+cp gcp/* ${HOME}/${REPO_NAME}/gcp
+mkdir -p ${HOME}/${REPO_NAME}/onprem
+cp onprem/* ${HOME}/${REPO_NAME}/onprem
 
 echo "⏫ Pushing to app-repo master"
+cd $HOME/$REPO_NAME
 git add .
 git commit -m "cloudbuild.yaml, Bank of Anthos init"
 git push -u origin master
 
 echo "⭐️ Navigate to this URL to view the status of Cloud Build:
+echo "http://console.cloud.google.com/cloud-build/dashboard?project=${PROJECT_ID}"

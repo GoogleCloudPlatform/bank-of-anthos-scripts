@@ -29,4 +29,8 @@ export CB_SA="${PROJECT_NUMBER}@cloudbuild.gserviceaccount.com"
 
 gcloud projects add-iam-policy-binding ${PROJECT_ID} \
   --member serviceAccount:${CB_SA} \
-  --role roles/secretmanager.viewer --role roles/container.developer
+  --role roles/secretmanager.secretAccessor
+
+gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+  --member serviceAccount:${CB_SA} \
+  --role roles/container.developer
