@@ -51,8 +51,10 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
     ./kops/provision-remote-gce.sh &> ${WORK_DIR}/provision-remote.log &
     wait
 
-    # configure Kops firewall rules + continually allow Kops kubectl access
+    # generate kops kubecfg
     ./common/connect-kops-remote.sh
+
+    # configure Kops firewall rules + continually allow Kops kubectl access
     ./kops/start-firewall-updater.sh
 
     # install service mesh: Istio, replicated control plane multicluster
