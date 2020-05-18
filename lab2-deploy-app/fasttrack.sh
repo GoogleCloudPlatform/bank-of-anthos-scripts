@@ -64,5 +64,5 @@ git add .
 git commit -m "cloudbuild.yaml, Bank of Anthos init"
 git push -u origin master
 
-echo "⭐️ Navigate to this URL to view the status of Cloud Build:
+echo "⭐️ Navigate to this URL to view the status of Cloud Build:"
 echo "http://console.cloud.google.com/cloud-build/dashboard?project=${PROJECT_ID}"
