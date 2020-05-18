@@ -13,17 +13,25 @@
 # limitations under the License.
 
 export PROJECT_ID=$(gcloud config get-value project)
+export PROJECT_NUMBER=$(gcloud projects describe ${PROJECT_ID} --format="value(projectNumber)")
+export SECRET_NAME="onprem-context"
+export SECRET_FILE="${WORK_DIR}/onprem.context"
 
+echo "Enable the Secret Manager API"
+gcloud services enable secretmanager.googleapis.com
 
-# enable Secret Manager API
+echo "☸️ Write the onprem kubeconfig to Secret Manager"
+gcloud secrets create ${SECRET_NAME} --replication-policy=automatic \
+    --data-file=${SECRET_FILE}
 
+echo "Enable the Cloud Build API"
+gcloud services enable cloudbuild.googleapis.com
 
-# write onprem.context as a secret in Secret Manager
+# https://cloud.google.com/iam/docs/understanding-roles#predefined_roles
+echo "✅ Give Cloud Build worker access to GKE, Secret Manager"
 
+export CB_SA="${PROJECT_NUMBER}@cloudbuild.gserviceaccount.com"
 
-# enable cloud build API
-
-
-
-# give cloud builder service account access to GKE and Secret Manager
-
+gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+  --member serviceAccount:${CB_SA} \
+  --role roles/secretmanager.viewer --role roles/container.developer

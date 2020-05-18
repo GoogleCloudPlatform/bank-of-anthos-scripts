@@ -13,18 +13,46 @@
 # limitations under the License.
 
 export PROJECT_ID=$(gcloud config get-value project)
+export EMAIL=$(gcloud config get-value account)
+export REPO_NAME="app-repo"
+export PROJECT_REPO_URL=https://source.developers.google.com/p/${PROJECT_ID}/r/${REPO_NAME}
 
 # create app-repo CSR repo
+echo "🚀 Creating app-repo"
+git config --global user.email "$EMAIL"
+git config --global user.name "$USER"
 
+gcloud source repos create ${REPO_NAME}
 
-# copy cloudbuild
+echo "🏠 Setting up local repo"
+cd $HOME
+mkdir ${REPO_NAME}
+git init
+git remote remove origin
+git config credential.helper gcloud.sh
+git remote add origin $PROJECT_REPO_URL
+git push -u origin master -f
 
+echo "🔄 Creating a Cloud Build trigger for app repo"
+gcloud beta builds triggers create cloud-source-repositories \
+--repo=${REPO_NAME} \
+--branch-pattern="master" \
+--build-config="cloudbuild.yaml"
 
-# create cloud build trigger: push to app-repo master --> build
+echo "🏗 Copying cloudbuild.yaml into app repo"
+cp ./cloudbuild.yaml ${HOME}/${REPO_NAME}
 
+echo "⛵️ Generating Istio service entries for gcp cluster"
+GWIP_ONPREM=$(kubectl --context=onprem get -n istio-system service istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+sed 's/GWIP_ONPREM/'$GWIP_ONPREM'/g' gcp/service-entries.yaml.tpl > gcp/service-entries.yaml
 
+echo "🏦 Copying Bank of Anthos manifests into app repo"
+cp gcp/ ${HOME}/${REPO_NAME}
+cp onprem ${HOME}/${REPO_NAME}
 
-# push to app-repo master
+echo "⏫ Pushing to app-repo master"
+git add .
+git commit -m "cloudbuild.yaml, Bank of Anthos init"
+git push -u origin master
 
-
-# view cloud build dashboard
+echo "⭐️ Navigate to this URL to view the status of Cloud Build:
