@@ -52,3 +52,16 @@ data:
   DEFAULT_CONTACT_NAME_A: "Alice"
   DEFAULT_CONTACT_ACCOUNT_B: "1055757655"
   DEFAULT_CONTACT_NAME_B: "Bob"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: accounts-db-config
+  namespace: boa
+  labels:
+    app: accounts-db
+data:
+  POSTGRES_DB: accounts-db
+  POSTGRES_USER: accounts-admin
+  POSTGRES_PASSWORD: accounts-pwd
+  ACCOUNTS_DB_URI: postgresql://accounts-admin:accounts-pwd@accounts-db:5432/accounts-db
