@@ -28,8 +28,7 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
     source ./common/settings.env
     ./common/install-tools.sh
 
-    # enable apis
-    echo "Enabling Anthos APIs... This may take up to 5 minutes."
+    echo "Enabling APIs... This may take up to 5 minutes."
     gcloud services enable \
     container.googleapis.com \
     compute.googleapis.com \
@@ -43,7 +42,9 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
     gkeconnect.googleapis.com \
     gkehub.googleapis.com \
     serviceusage.googleapis.com \
-    sourcerepo.googleapis.com
+    sourcerepo.googleapis.com \
+    cloudbuild.googleapis.com \
+    secretmanager.googleapis.com
 
     echo -e "\nMultiple tasks are running asynchronously to setup your environment.  It may appear frozen, but you can check the logs in $WORK_DIR for additional details in another terminal window."
     ./gke/provision-gke.sh &> ${WORK_DIR}/provision-gke.log &

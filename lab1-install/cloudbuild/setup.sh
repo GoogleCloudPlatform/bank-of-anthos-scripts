@@ -17,15 +17,10 @@ export PROJECT_NUMBER=$(gcloud projects describe ${PROJECT_ID} --format="value(p
 export SECRET_NAME="onprem-context"
 export SECRET_FILE="${WORK_DIR}/onprem.context"
 
-echo "Enable the Secret Manager API"
-gcloud services enable secretmanager.googleapis.com
-
 echo "☸️ Write the onprem kubeconfig to Secret Manager"
 gcloud secrets create ${SECRET_NAME} --replication-policy=automatic \
     --data-file=${SECRET_FILE}
 
-echo "Enable the Cloud Build API"
-gcloud services enable cloudbuild.googleapis.com
 
 # https://cloud.google.com/iam/docs/understanding-roles#predefined_roles
 echo "✅ Give Cloud Build worker access to GKE, Secret Manager"
