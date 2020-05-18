@@ -1,0 +1,25 @@
+steps:
+- name: gcr.io/cloud-builders/gcloud
+  id: 'Secret Manager - get onprem kubecfg'
+  entrypoint: 'bash'
+  args: [ '-c', 'gcloud secrets versions access latest --project=${PROJECT_ID} --secret=onprem-context > /workspace/onprem.context' ]
+# Deploy onprem/ manifests to the onprem Kops cluster
+- name: bitnami/kubectl:latest
+  id: 'Deploy to onprem'
+  env:
+  - 'KUBECONFIG=/workspace/onprem.context'
+  args:
+    - "apply"
+    - "-f"
+    - "./onprem"
+# Deploy the gcp/ manifests to the GKE gcp cluster
+- name: "gcr.io/cloud-builders/kubectl"
+  id: 'Deploy to gcp'
+  args:
+    - "apply"
+    - "-f"
+    - "./gcp"
+  env:
+    - "CLOUDSDK_CORE_PROJECT=${PROJECT_ID}"
+    - "CLOUDSDK_COMPUTE_REGION=us-central1-b"
+    - "CLOUDSDK_CONTAINER_CLUSTER=gcp"
