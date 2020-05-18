@@ -16,6 +16,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: environment-config
+  namespace: boa
 data:
   LOCAL_ROUTING_NUM: "123456789"
   PUB_KEY_PATH: "/root/.ssh/publickey"
@@ -24,8 +25,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: service-api-config
-  annotations:
-    configmanagement.gke.io/cluster-selector: gcp
+  namespace: boa
 data:
   TRANSACTIONS_API_ADDR: "ledgerwriter.fsi.global:8080"
   BALANCES_API_ADDR: "balancereader.fsi.global:8080"
@@ -37,6 +37,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: default-data-config
+  namespace: boa
 data:
   USE_DEFAULT_DATA: "True"
   # All default user accounts are hardcoded to use the login password 'password'

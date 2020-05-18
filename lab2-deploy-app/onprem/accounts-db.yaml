@@ -16,8 +16,7 @@ kind: StatefulSet
 apiVersion: apps/v1
 metadata:
   name: accounts-db
-  annotations:
-    configmanagement.gke.io/cluster-selector: gcp
+  namespace: boa
   labels:
     app: accounts-db
     tier: db
@@ -59,8 +58,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: accounts-db
-  annotations:
-    configmanagement.gke.io/cluster-selector: gcp
+  namespace: boa
   labels:
     app: accounts-db
     tier: db
@@ -78,8 +76,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: accounts-db-config
-  annotations:
-    configmanagement.gke.io/cluster-selector: gcp
+  namespace: boa
   labels:
     app: accounts-db
 data:

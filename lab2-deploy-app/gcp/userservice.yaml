@@ -16,8 +16,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: userservice
-  annotations:
-    configmanagement.gke.io/cluster-selector: gcp
+  namespace: boa
 spec:
   selector:
     matchLabels:
@@ -72,8 +71,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: userservice
-  annotations:
-    configmanagement.gke.io/cluster-selector: gcp
+  namespace: boa
 spec:
   type: ClusterIP
   selector:

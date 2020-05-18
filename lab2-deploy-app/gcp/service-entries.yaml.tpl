@@ -2,9 +2,7 @@ apiVersion: networking.istio.io/v1alpha3
 kind: ServiceEntry
 metadata:
   name: balancereader
-  namespace: fsi
-  annotations:
-    configmanagement.gke.io/cluster-selector: gcp
+  namespace: boa
 spec:
   hosts:
   - balancereader.fsi.global
@@ -25,9 +23,7 @@ apiVersion: networking.istio.io/v1alpha3
 kind: ServiceEntry
 metadata:
   name: ledgerwriter
-  namespace: fsi
-  annotations:
-    configmanagement.gke.io/cluster-selector: gcp
+  namespace: boa
 spec:
   hosts:
   - ledgerwriter.fsi.global
@@ -48,9 +44,7 @@ apiVersion: networking.istio.io/v1alpha3
 kind: ServiceEntry
 metadata:
   name: transactionhistory
-  namespace: fsi
-  annotations:
-    configmanagement.gke.io/cluster-selector: gcp
+  namespace: boa
 spec:
   hosts:
   - transactionhistory.fsi.global

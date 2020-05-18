@@ -16,8 +16,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: balancereader
-  annotations:
-    configmanagement.gke.io/cluster-selector: onprem
+  namespace: boa
 spec:
   selector:
     matchLabels:
@@ -83,8 +82,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: balancereader
-  annotations:
-    configmanagement.gke.io/cluster-selector: onprem
+  namespace: boa
 spec:
   type: ClusterIP
   selector:

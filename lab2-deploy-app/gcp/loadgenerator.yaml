@@ -15,8 +15,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: loadgenerator
-  annotations:
-    configmanagement.gke.io/cluster-selector: gcp
+  namespace: boa
 spec:
   selector:
     matchLabels:
