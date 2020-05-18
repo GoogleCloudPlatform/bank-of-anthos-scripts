@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 # Copyright 2020 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,5 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+export PROJECT_ID=$(gcloud config get-value project)
 
-docker rm -f kops-firewall-updater
+
+# enable Secret Manager API
+
+
+# write onprem.context as a secret in Secret Manager
+
+
+# enable cloud build API
+
+
+
+# give cloud builder service account access to GKE and Secret Manager
+

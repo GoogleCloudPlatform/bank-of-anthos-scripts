@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 # Copyright 2020 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,5 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+export PROJECT_ID=$(gcloud config get-value project)
 
-docker rm -f kops-firewall-updater
+# create app-repo CSR repo
+
+
+# copy cloudbuild
+
+
+# create cloud build trigger: push to app-repo master --> build
+
+
+
+# push to app-repo master
+
+
+# view cloud build dashboard

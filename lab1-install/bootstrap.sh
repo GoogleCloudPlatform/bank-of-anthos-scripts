@@ -50,7 +50,9 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
     ./kops/provision-remote-gce.sh &> ${WORK_DIR}/provision-remote.log &
     wait
 
+    # configure Kops firewall rules + continually allow Kops kubectl access
     ./common/connect-kops-remote.sh
+    ./kops/start-firewall-updater.sh
 
     # install service mesh: Istio, replicated control plane multicluster
     CONTEXT="gcp" ./istio/install_istio.sh
@@ -66,12 +68,13 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
     kubectx gcp && ./acm/install-config-operator.sh
     kubectx onprem && ./acm/install-config-operator.sh
 
+    # Cloud Build setup
+    ./cloudbuild/setup.sh
+
     # install GKE connect on both clusters / print onprem login token
     ./gke/connect-hub.sh
     ./kops/connect-hub.sh
 
-
-    # run kops firewall writer (enforcer workaround) as a background docker container
 
 
 
