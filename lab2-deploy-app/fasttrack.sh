@@ -18,6 +18,7 @@ export REPO_NAME="app-repo"
 export PROJECT_REPO_URL=https://source.developers.google.com/p/${PROJECT_ID}/r/${REPO_NAME}
 
 # create app-repo CSR repo
+echo "*************** Welcome to Lab 2 - Cloud Build + CI/CD *********************** "
 echo "🚀 Creating app-repo"
 git config --global user.email "$EMAIL"
 git config --global user.name "$USER"

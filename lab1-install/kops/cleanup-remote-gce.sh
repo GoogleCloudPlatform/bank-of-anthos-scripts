@@ -18,17 +18,20 @@
 export PROJECT=$(gcloud config get-value project)
 export WORK_DIR=${WORK_DIR:="${PWD}/workdir"}
 export PATH=$PATH:$WORK_DIR/bin:
-
-
 export REMOTE_CLUSTER_NAME_BASE=${GCE_CONTEXT:-"onprem"}
 export REMOTE_CLUSTER_NAME=$REMOTE_CLUSTER_NAME_BASE.k8s.local
 export KOPS_STORE=gs://$PROJECT-kops-$REMOTE_CLUSTER_NAME_BASE
 
+
+# unregister cluster from Anthos hub
+echo "☸️ Unregistering onprem cluster from Hub..."
+gcloud container hub memberships unregister ${CLUSTER_NAME} \
+   --project=${PROJECT_ID} \
+   --gke-cluster="${CLUSTER_ZONE}/${CLUSTER_NAME}"
+
+echo "☸️ Deleting onprem Kops cluster..."
 kops delete cluster --name $REMOTE_CLUSTER_NAME --state $KOPS_STORE --yes
-
-
 gsutil -m rm -r $KOPS_STORE
-
 kubectx -d $REMOTE_CLUSTER_NAME_BASE
 
 
