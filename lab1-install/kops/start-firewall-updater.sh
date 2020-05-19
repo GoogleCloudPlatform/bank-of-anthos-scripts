@@ -37,7 +37,12 @@ gcloud iam service-accounts keys create ${KEY_PATH} \
   --iam-account ${SERVICE_ACCOUNT_NAME}@${PROJECT_ID}.iam.gserviceaccount.com
 
 
-# Start firewall updater
-echo "🐳 Running firewall updater as a background Docker container..."
-docker run -d --name kops-firewall-updater -e GOOGLE_APPLICATION_CREDENTIALS="/tmp/serviceaccount.json" \
--v ${KEY_PATH}:/tmp/serviceaccount.json gcr.io/bank-of-anthos/kops-firewall-updater:latest ${PROJECT_ID}
+# Kops cluster runs the firewall updater as a pod - ie. Kops updates its own firewall rule
+echo "☸️  Deploying firewall updater in kops cluster"
+kubectx onprem;
+kubectl create namespace fw
+kubectl label namespace fw istio-injection=false --overwrite
+
+kubectl create secret generic -n fw gac --from-file=gcp=${KEY_PATH}
+sed 's/MY_PROJECT/'$PROJECT_ID'/g' kops/firewall-updater/deployment.yaml.tpl > kops/firewall-updater/deployment.yaml
+kubectl apply -n fw -f kops/firewall-updater/deployment.yaml

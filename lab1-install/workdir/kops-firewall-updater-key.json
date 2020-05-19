@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "megandemo",
+  "private_key_id": "a6dbf15870049825c3a92a4dce0e8f6c9431f057",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEugIBADANBgkqhkiG9w0BAQEFAASCBKQwggSgAgEAAoIBAQCRMSTtPpMs1J+3\nyDlFlXj6c3OpOm3oi0x1UGweiSUCfDt/iPiGgHUFYqfil1PaPsryYJjdMrTeBDpY\nuKJsrGywS4vHb3+vTgo3gMhCFlGnPEEPUjkob64Y0BVBYFpV8bywM+6ZDLDWb/1O\njE8aVBhE7TN8iQXoDN0KfTEssgpNwxPzx1sllZsND08DAu8FvrkNqSy+9p6FQNvY\nZsw2QNy1P5jBDlIoJVqDtgT+2LDUI+elP9PConyRtl2jhI8PsDunEWzLF0XnYgin\nCHqsIH8YHePJOTM6kjGF+/zyNiKXu/e1ZnBvSrtqpGTaltDcILNMlN3adjQUgPq8\nJkYmXTkLAgMBAAECgf8dmm/Ta3Bwo+FiJKnen8jIAO7NLnGy/HvMw9pCq5R0Bt7a\nVHBrmrGfkZeLvaNNJ4v8gtaUWl5w2ORncviBxjKedRgUAUw02wSt4QvhnY2iFWxb\nFaGvjurWx9HwvSDAReH7tVqQEKJuB6Y4k2m1I6A8KCRHmGt1EJW4XrPT0gJj48pr\nyaVqnmp1S4RJpDUAVYTydoRkdtxqzDYJLjPLj5kAsLk7j5ztQA/hBZAs4LUpOreg\nDlxN5PlzUMjE35P0pPSxnFYv5AoJiOT/VVC4J7iBQhZVQ6lHgqADC1pu7bsQVDYI\n1fMDniImwPJgigWlg0dQbVOWe2bZ7NHyLaCwpY0CgYEAxFKfayDwuyRa6HGefs5X\nPWVs6L44725RPIQH9EHaJuJisQDTah4IKIsPt59sL8ZXYhJ/Hvst/k3Yb1u5q7A5\njB2vdrC4TPlcY6jBtn+aBlIM2G2bbaz9yt0//1qsO/n37d5OJaXaBl32e64vtH+3\npRf0koN4817PgCdAnrAdEicCgYEAvVOk4PvMQLhNbw3S+WWG0XfAc5LwZa0K8vgM\ne1zrzN0MGN+JXEX8sMabt3+4KioQQ0zcBQsvIKtWjdkEFonNUBNI4MV7r2oXeiqU\n2BJkMlw7i+Y5gpcR1xns+CoE+ZdZs7tF/932v0NnfBAe2C3mTFQ5ivpk8ohsm6GT\n8OJ/RH0CgYBvq4eeiigkavOC0E4VVw1skOq4IKuGFbwDrh5QI70Q7SiyAgQ/kkGV\nvjP8gKQrMKi30kmYt8tbobAA963PKPgy6RfLbY4HyrdwwKcfRcm42qcP3JjSc9oQ\nsHUcrNjXbMJH/XF6HLK9eGkhxNzB0PwG3m9xf3MnC8D/5lPtb8O5dQKBgHlju/+U\n8q08fkmKL49AjWSYx4hS2lgWz0Jh0H74YSgFQtBf4w6KwS4G6aiJ92bxeWPtT9Tc\nCueDdAeW8YwR5tZExyF2/YrHFy55Rt4TTLMNeBCHGLCmdAXa1Zl4N6Bgbl9S39ri\nUmbnrN5a56vsIhEmn46AZWEsH5bZzqVQVBFxAoGAL//SKqnaJXVCRBH7thBgeCK5\nKNLH6X/OFvzRJGwwln3L3yERbOsK5lAesNgArIhQJOdbzSQMyu35/LmIkWAOsOsc\nNYby9H2HzOSqWbhYe4Yx7SnRatCFqSCh9J7wGAS3aL4bmtQljreOtj5ug7bptuxE\nGlgdHZxfvK2GZDXfWLk=\n-----END PRIVATE KEY-----\n",
+  "client_email": "kops-firewall-updater@megandemo.iam.gserviceaccount.com",
+  "client_id": "105883868499262816482",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/kops-firewall-updater%40megandemo.iam.gserviceaccount.com"
+}

@@ -84,9 +84,5 @@ def main(project_id):
     s.run()
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(
-        description=__doc__,
-        formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument('project_id', help='Your Google Cloud project ID.')
-    args = parser.parse_args()
-    main(args.project_id)
+    project_id = os.getenv('PROJECT_ID')
+    main(project_id)

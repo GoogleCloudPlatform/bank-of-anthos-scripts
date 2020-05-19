@@ -18,6 +18,20 @@ export PROJECT=$(gcloud config get-value project)
 export GCLOUD_ACCOUNT=$(gcloud config get-value account)
 export REPO_URL=https://source.developers.google.com/p/${PROJECT}/r/config-repo
 
+
+echo "☁️ Project setup"
+GCP_DEVREL_UNTRUSTED_FOLDER_ID="1053275019153"
+DATE=`date +"%m%d%y-%H%M"`
+PROJECT_ID="${USER}-sme-${DATE}"
+gcloud projects create $PROJECT_ID --folder=${GCP_DEVREL_UNTRUSTED_FOLDER_ID}
+gcloud config set project $PROJECT_ID
+gcloud alpha billing projects link $PROJECT_ID --billing-account $BILLING_ID
+cd $HOME; git clone https://github.com/GoogleCloudPlatform/bank-of-anthos-scripts; cd bank-of-anthos-scripts/lab1-install/
+source ./env
+./bootstrap.sh
+
+
+echo "🐙 Finish ACM setup"
 git config credential.helper gcloud.sh
 gcloud source repos create config-repo
 cd $HOME
