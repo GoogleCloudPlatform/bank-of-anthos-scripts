@@ -27,13 +27,14 @@ gcloud config set project $PROJECT_ID
 gcloud alpha billing projects link $PROJECT_ID --billing-account $BILLING_ID
 cd $HOME; cd bank-of-anthos-scripts/lab1-install/
 source ./env
+source ./common/install-tools.sh
 
 echo "🚀 Running bootstrap script - this will take about 10 minutes."
 ./bootstrap.sh
 
 
 echo "🐙 Bootstrap done! Set up ACM config repo..."
-export REPO_URL=https://source.developers.google.com/p/${PROJECT}/r/config-repo
+export REPO_URL=https://source.developers.google.com/p/${PROJECT_ID}/r/config-repo
 git config credential.helper gcloud.sh
 gcloud source repos create config-repo
 cd $HOME
@@ -73,14 +74,14 @@ cat $BASE_DIR/acm/config_sync.yaml | \
   sed 's|<REPO_URL>|'"$REPO_URL"'|g' | \
   sed 's|<CLUSTER_NAME>|'"$ONPREM"'|g' | \
   sed 's|none|ssh|g' | \
-  kubectl apply -f -
+  kubectl apply -n config-management-system -f -
 
 kubectx $GCP
 cat $BASE_DIR/acm/config_sync.yaml | \
   sed 's|<REPO_URL>|'"$REPO_URL"'|g' | \
   sed 's|<CLUSTER_NAME>|'"$GCP"'|g' | \
   sed 's|none|ssh|g' | \
-  kubectl apply -f -
+  kubectl apply -n config-management-system -f -
 
 
 echo "✅ Lab 1 fast track complete!"
