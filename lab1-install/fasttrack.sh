@@ -12,8 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-export PROJECT_ID=$(gcloud config get-value project)
 
+echo "🏔 Lab 1 - Begin Fast Track"
+echo "⏰ This script will bootstrap an Anthos environment for you."
+
+export PROJECT_ID=$(gcloud config get-value project)
 export PROJECT=$(gcloud config get-value project)
 export GCLOUD_ACCOUNT=$(gcloud config get-value account)
 export REPO_URL=https://source.developers.google.com/p/${PROJECT}/r/config-repo
@@ -28,10 +31,12 @@ gcloud config set project $PROJECT_ID
 gcloud alpha billing projects link $PROJECT_ID --billing-account $BILLING_ID
 cd $HOME; git clone https://github.com/GoogleCloudPlatform/bank-of-anthos-scripts; cd bank-of-anthos-scripts/lab1-install/
 source ./env
+
+echo "🚀 Running bootstrap script - this will take about 10 minutes."
 ./bootstrap.sh
 
 
-echo "🐙 Finish ACM setup"
+echo "🐙 Bootstrap done! Set up ACM config repo..."
 git config credential.helper gcloud.sh
 gcloud source repos create config-repo
 cd $HOME
@@ -45,7 +50,7 @@ git commit -m "Initialize config-repo"
 git push -u origin master
 
 
-
+echo "🔑 Granting ACM config-repo access..."
 ssh-keygen -t rsa -b 4096 \
 -C "$GCLOUD_ACCOUNT" \
 -N '' \
@@ -61,8 +66,7 @@ kubectl create secret generic git-creds \
 --namespace=config-management-system \
 --from-file=ssh=$HOME/.ssh/id_rsa.nomos
 
-
-
+echo "⬇️ Creating ConfigManagement CRD in both clusters..."
 export ONPREM=onprem
 export GCP=gcp
 REPO_URL=ssh://${GCLOUD_ACCOUNT}@source.developers.google.com:2022/p/${PROJECT}/r/config-repo
@@ -80,3 +84,6 @@ cat $BASE_DIR/acm/config_sync.yaml | \
   sed 's|<CLUSTER_NAME>|'"$GCP"'|g' | \
   sed 's|none|ssh|g' | \
   kubectl apply -f -
+
+
+echo "✅ Lab 1 fast track complete!"
