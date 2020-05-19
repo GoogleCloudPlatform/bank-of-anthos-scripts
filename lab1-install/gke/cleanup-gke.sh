@@ -1,3 +1,4 @@
+
 #!/usr/bin/env bash
 
 # Copyright 2020 Google LLC
@@ -15,8 +16,19 @@
 # limitations under the License.
 
 # Variables
+export PROJECT=$(gcloud config get-value project)
+export PROJECT_ID=${PROJECT}
+export WORK_DIR=${WORK_DIR:="${PWD}/workdir"}
+
 export CLUSTER_NAME="gcp"
 export CLUSTER_ZONE="us-central1-b"
 
+# unregister cluster from Anthos hub
+echo "☸️ Unregistering gcp cluster from Hub..."
+gcloud container hub memberships unregister ${CLUSTER_NAME} \
+   --project=${PROJECT_ID} \
+   --gke-cluster="${CLUSTER_ZONE}/${CLUSTER_NAME}"
 
-gcloud beta container clusters delete $CLUSTER_NAME --zone $CLUSTER_ZONE -q
+# delete GKE cluster
+echo "☸️ Deleting gcp cluster..."
+gcloud container clusters delete ${CLUSTER_NAME} --zone ${CLUSTER_ZONE} --project=${PROJECT_ID}

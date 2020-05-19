@@ -17,53 +17,43 @@
 # Variables
 
 if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
-    # if user is cleaning up from a refreshed shell, this needs to be done
+    echo "🧹 Cleaning up Anthos environment in project: ${PROJECT_ID}"
     source ./env
 
     export PROJECT=$(gcloud config get-value project)
     export WORK_DIR=${WORK_DIR:="${PWD}/workdir"}
-
-    echo "WORK_DIR set to $WORK_DIR"
-
     gcloud config set project $PROJECT
 
-    # Clean up resources in the background and wait for completion
-    ./connect-hub/cleanup-hub.sh
-
-    echo -e "\nMultiple tasks are running asynchronously to cleanup your environment.  It may appear frozen, but you can check the logs in $WORK_DIR for additional details in another terminal window."
-
+    echo "☁️ Removing Kubernetes clusters from your project... This may take a few minutes ..."
     ./connect-hub/cleanup-remote-gce.sh &> ${WORK_DIR}/cleanup-remote.log &
     ./gke/cleanup-gke.sh &> ${WORK_DIR}/cleanup-gke.log &
-
     wait
 
+    echo "📂 Removing your workdir..."
     rm -rf $WORK_DIR
 
-    # Delete forwarding rule created by Istio ingress gateway on remote cluster
+    echo "🔥 Cleaning up forwarding and firewall rules..."
     gcloud compute forwarding-rules delete $(gcloud compute forwarding-rules list --format="value(name)") --region us-central1 --quiet
-
-    # Delete target-pools created by Istio ingress gateway on remote cluster
     gcloud compute target-pools delete $(gcloud compute target-pools list --format="value(name)") --region us-central1 --quiet
-
-    # Stop firewall rule updater (docker)
-    ./kops/stop-firewall-updater.sh
-
-    # Delete firewall rule for remote cluster node 10256 and istio ingress gateway
     gcloud compute firewall-rules delete \
 	$(gcloud compute firewall-rules list --format="table(name,targetTags.list():label=TARGET_TAGS)" | \
 	grep remote-k8s-local-k8s-io-role-node | \
 	awk '{print $1}'\
 	) --quiet
 
-    # Delete config-repo from CSR
+    echo "🐙 Deleting CSR repos..."
     gcloud source repos delete config-repo --quiet
+    gcloud source repos delete app-repo --quiet
 
     # Delete remaining files and folders
+    echo "🗑 Finishing up..."
     rm -rf $HOME/.kube/config \
            $HOME/config-repo \
-           $HOME/csm-alpha-onboard-logs \
+           $HOME/app-repo \
            $HOME/gopath \
            $HOME/.ssh/id_rsa.nomos.*
+
+    echo "✅ Cleanup complete. You can continue using ${PROJECT_ID}."
 
 else
     echo "This has only been tested in GCP Cloud Shell.  Only Linux (debian) is supported".

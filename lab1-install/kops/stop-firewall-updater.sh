@@ -14,5 +14,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-docker rm -f kops-firewall-updater
+kubectl delete -f firewall-updater/deployment.yaml
