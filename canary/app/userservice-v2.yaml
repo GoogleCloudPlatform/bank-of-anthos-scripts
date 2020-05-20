@@ -25,6 +25,7 @@ spec:
     metadata:
       labels:
         app: userservice
+        version: v2
     spec:
       terminationGracePeriodSeconds: 5
       containers:
@@ -66,17 +67,3 @@ spec:
             path: privatekey
           - key: jwtRS256.key.pub
             path: publickey
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: userservice
-  namespace: boa
-spec:
-  type: ClusterIP
-  selector:
-    app: userservice
-  ports:
-  - name: http
-    port: 8080
-    targetPort: 8080
