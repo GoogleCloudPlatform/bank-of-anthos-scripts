@@ -1,9 +1,10 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
 metadata:
-  name: transactionhistory
+  name: userservice
+  namespace: boa
 spec:
-  host: transactionhistory
+  host: userservice
   subsets:
   - name: v1
     labels:
