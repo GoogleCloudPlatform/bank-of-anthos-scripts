@@ -28,17 +28,12 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
     ./gke/cleanup-gke.sh &> ${WORK_DIR}/cleanup-gke.log &
     wait
 
-    echo "📂 Removing your workdir..."
-    rm -rf $WORK_DIR
 
     echo "🔥 Cleaning up forwarding and firewall rules..."
     gcloud compute forwarding-rules delete $(gcloud compute forwarding-rules list --format="value(name)") --region us-central1 --quiet
     gcloud compute target-pools delete $(gcloud compute target-pools list --format="value(name)") --region us-central1 --quiet
-    gcloud compute firewall-rules delete \
-	$(gcloud compute firewall-rules list --format="table(name,targetTags.list():label=TARGET_TAGS)" | \
-	grep remote-k8s-local-k8s-io-role-node | \
-	awk '{print $1}'\
-	) --quiet
+    NODE_RULE="`gcloud compute firewall-rules list --format="table(name,targetTags.list():label=TARGET_TAGS)" | grep onprem-k8s-local-k8s-io-role-node | awk '{print $1}'`"
+    gcloud compute firewall-rules delete ${NODE_RULE} --quiet
 
     echo "🐙 Deleting CSR repos..."
     gcloud source repos delete config-repo --quiet
@@ -53,6 +48,7 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
            $HOME/.ssh/id_rsa.nomos.*
 
     rm -f $HOME/.customize_environment
+    rm -rf $WORK_DIR
 
     echo "✅ Cleanup complete. You can continue using ${PROJECT_ID}."
 
