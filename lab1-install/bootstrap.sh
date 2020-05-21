@@ -30,6 +30,11 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
     source ./common/settings.env
     ./common/install-tools.sh
 
+    echo "🚪 Configuring Cloud Shell to re-init environment if disconnected..."
+    echo 'source $HOME/bank-of-anthos-scripts/lab1-install/env' >> ~/.bashrc
+    echo 'source $HOME/bank-of-anthos-scripts/lab1-install/common/install-tools.sh' >> ~/.bashrc
+
+
     echo "🔆 Enabling GCP APIs... This may take up to 5 minutes."
     gcloud services enable \
     container.googleapis.com \
