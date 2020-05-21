@@ -15,24 +15,32 @@
 # limitations under the License.
 
 # Variables
-export PROJECT=$(gcloud config get-value project)
-export WORK_DIR=${WORK_DIR:="${PWD}/workdir"}
+export PROJECT_ID=$(gcloud config get-value project)
+export WORK_DIR=${WORK_DIR:="`pwd`/workdir"}
+echo "workdir is ${WORK_DIR}"
 export PATH=$PATH:$WORK_DIR/bin:
-export REMOTE_CLUSTER_NAME_BASE=${GCE_CONTEXT:-"onprem"}
-export REMOTE_CLUSTER_NAME=$REMOTE_CLUSTER_NAME_BASE.k8s.local
-export KOPS_STORE=gs://$PROJECT-kops-$REMOTE_CLUSTER_NAME_BASE
 
+export ONPREM_CLUSTER_NAME_BASE=${GCE_CONTEXT:-"onprem"}
+export ONPREM_CLUSTER_NAME=$ONPREM_CLUSTER_NAME_BASE.k8s.local
+export ONPREM_KUBECONFIG=$WORK_DIR/${ONPREM_CLUSTER_NAME_BASE}.context
+echo "kubeconfig location- ${ONPREM_KUBECONFIG}"
+
+export KOPS_STORE=gs://$PROJECT-kops-$ONPREM_CLUSTER_NAME_BASE
+
+
+gcloud config set project ${PROJECT_ID}
 
 # unregister cluster from Anthos hub
 echo "☸️ Unregistering onprem cluster from Hub..."
-gcloud container hub memberships unregister ${CLUSTER_NAME} \
+gcloud container hub memberships unregister ${ONPREM_CLUSTER_NAME_BASE} \
    --project=${PROJECT_ID} \
-   --gke-cluster="${CLUSTER_ZONE}/${CLUSTER_NAME}"
+   --context=$ONPREM_CLUSTER_NAME \
+   --kubeconfig=$ONPREM_KUBECONFIG \
 
 echo "☸️ Deleting onprem Kops cluster..."
-kops delete cluster --name $REMOTE_CLUSTER_NAME --state $KOPS_STORE --yes
+kops delete cluster --name $ONPREM_CLUSTER_NAME --state $KOPS_STORE --yes
 gsutil -m rm -r $KOPS_STORE
-kubectx -d $REMOTE_CLUSTER_NAME_BASE
+kubectx -d $ONPREM_CLUSTER_NAME_BASE
 
 
 

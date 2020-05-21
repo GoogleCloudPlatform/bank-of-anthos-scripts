@@ -22,10 +22,9 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
 
     export PROJECT=$(gcloud config get-value project)
     export WORK_DIR=${WORK_DIR:="${PWD}/workdir"}
-    gcloud config set project $PROJECT
 
     echo "☁️ Removing Kubernetes clusters from your project... This may take a few minutes ..."
-    ./connect-hub/cleanup-remote-gce.sh &> ${WORK_DIR}/cleanup-remote.log &
+    ./kops/cleanup-remote-gce.sh &> ${WORK_DIR}/cleanup-remote.log &
     ./gke/cleanup-gke.sh &> ${WORK_DIR}/cleanup-gke.log &
     wait
 
@@ -52,6 +51,8 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
            $HOME/app-repo \
            $HOME/gopath \
            $HOME/.ssh/id_rsa.nomos.*
+
+    rm -f $HOME/.customize_environment
 
     echo "✅ Cleanup complete. You can continue using ${PROJECT_ID}."
 
