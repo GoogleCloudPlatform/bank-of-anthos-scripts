@@ -29,7 +29,8 @@ spec:
       terminationGracePeriodSeconds: 5
       containers:
       - name: reader
-        image: gcr.io/bank-of-anthos/balancereader:v0.1.2
+        image: gcr.io/bank-of-anthos/balancereader:latest
+        imagePullPolicy: Always
         volumeMounts:
         - name: publickey
           mountPath: "/root/.ssh"
@@ -54,10 +55,11 @@ spec:
             name: ledger-db-config
         resources:
           requests:
-            cpu: 200m
-            memory: 256Mi
+            cpu: 100m
+            memory: 512Mi
           limits:
-            cpu: 300m
+            cpu: 500m
+            memory: 1Gi
         readinessProbe:
           httpGet:
             path: /ready

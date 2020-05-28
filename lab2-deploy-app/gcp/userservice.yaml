@@ -29,7 +29,8 @@ spec:
       terminationGracePeriodSeconds: 5
       containers:
       - name: userservice
-        image: gcr.io/bank-of-anthos/userservice:v0.1.2
+        image: gcr.io/bank-of-anthos/userservice:latest
+        imagePullPolicy: Always
         volumeMounts:
         - name: keys
           mountPath: "/root/.ssh"
@@ -57,6 +58,13 @@ spec:
             port: 8080
           initialDelaySeconds: 5
           periodSeconds: 5
+        resources:
+          requests:
+            cpu: 100m
+            memory: 64Mi
+          limits:
+            cpu: 500m
+            memory: 256Mi
       volumes:
       - name: keys
         secret:
