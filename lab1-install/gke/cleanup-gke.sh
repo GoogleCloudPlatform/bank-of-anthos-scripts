@@ -18,7 +18,7 @@
 # Variables
 export PROJECT=$(gcloud config get-value project)
 export PROJECT_ID=${PROJECT}
-export WORK_DIR=${WORK_DIR:="${PWD}/workdir"}
+export WORK_DIR=${WORK_DIR:="`pwd`/workdir"}
 
 export CLUSTER_NAME="gcp"
 export CLUSTER_ZONE="us-central1-b"
@@ -31,4 +31,4 @@ gcloud container hub memberships unregister ${CLUSTER_NAME} \
 
 # delete GKE cluster
 echo "☸️ Deleting gcp cluster..."
-gcloud container clusters delete ${CLUSTER_NAME} --zone ${CLUSTER_ZONE} --project=${PROJECT_ID}
+gcloud container clusters delete --quiet ${CLUSTER_NAME} --zone ${CLUSTER_ZONE} --project=${PROJECT_ID}
