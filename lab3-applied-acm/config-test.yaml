@@ -1,0 +1,32 @@
+steps:
+# Generate the kubeconfig file needed to authenticate to the GKE cluster. The root user generates this file with restricted permissions.
+- name: 'gcr.io/cloud-builders/kubectl'
+  args: ['config', 'current-context']
+  env:
+  - 'KUBECONFIG=/workspace/kubeconfig'
+  - 'CLOUDSDK_COMPUTE_ZONE=ZONE'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=CLUSTER_NAME'
+  - 'CLOUDSDK_CONTAINER_USE_APPLICATION_DEFAULT_CREDENTIALS=true'
+- name: gcr.io/cloud-builders/gcloud
+  id: 'Secret Manager - get onprem kubecfg'
+  entrypoint: 'bash'
+  args: [ '-c', 'gcloud secrets versions access latest --project=${PROJECT_ID} --secret=onprem-context >> /workspace/kubeconfig' ]
+# Grant read/write permissions to the workspace.
+- name: 'bash'
+  args: ['chmod', '777', '/workspace']
+# Run nomos hydrate on the config-root directory and output the result into hydrated-configs.
+- name: 'gcr.io/config-management-release/nomos'
+  args: ['nomos', 'hydrate', '--path', '/workspace', '--output', '/workspace/configs']
+  env:
+  - 'KUBECONFIG=/workspace/kubeconfig'
+# Recursively read a directory of kubernetes YAML configs from the workspace and output them as one list into config-source.yaml.
+- name: 'gcr.io/config-management-release/read-yaml'
+  args: ['--input', '/dev/null', '-d', 'source_dir=/workspace/configs', '--output', '/workspace/config-source.yaml']
+# Analyze all files for service mesh validation
+- name: 'istio/istioctl:1.5.4'
+  args: ['analyze', '-A', '--failure-threshold', 'Error', '/workspace/config-source.yaml']
+  env:
+  - 'KUBECONFIG=/workspace/kubeconfig'
+# Validate input configs against any OPA ConstraintTemplates and Constraints it finds in its input.
+- name: 'gcr.io/config-management-release/policy-controller-validate'
+  args: ['--input', '/workspace/config-source.yaml']

@@ -1,0 +1,14 @@
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: frontend-userservice
+spec:
+  selector:
+    matchLabels:
+      app: userservice
+  action: ALLOW
+  rules: 
+  - from: 
+    - source:
+        principals:
+          - cluster.local/ns/boa/sa/frontend

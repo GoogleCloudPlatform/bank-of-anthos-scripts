@@ -1,0 +1,27 @@
+apiVersion: templates.gatekeeper.sh/v1beta1
+kind: ConstraintTemplate
+metadata:
+  name: peerauthnstrict
+spec:
+  crd:
+    spec:
+      names:
+        kind: PeerAuthnStrict
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package asm.guardrails.peerauthnstrict
+
+        # VIOLATION peer authn settings do not set mTLS 
+        violation[{"msg": msg }] {
+          p := input.review.object
+
+          p.apiVersion == "security.istio.io/v1beta1"
+          p.kind == "PeerAuthentication"
+
+          not p.spec.mtls.mode == "STRICT"
+          not p.spec.mtls == {}
+          not p.spec.mtls == null
+          
+          msg := "spec.mtls does not include STRICT mTLS settings"
+        }
