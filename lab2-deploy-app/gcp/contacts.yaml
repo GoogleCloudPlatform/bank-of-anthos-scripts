@@ -29,14 +29,14 @@ spec:
       terminationGracePeriodSeconds: 5
       containers:
       - name: contacts
-        image: gcr.io/bank-of-anthos/contacts:v0.1.2
+        image: gcr.io/bank-of-anthos/contacts:v0.2.0
         volumeMounts:
         - name: publickey
           mountPath: "/root/.ssh"
           readOnly: true
         env:
         - name: VERSION
-          value: "v0.1.2"
+          value: "v0.2.0"
         - name: PORT
           value: "8080"
         envFrom:
@@ -46,11 +46,11 @@ spec:
             name: accounts-db-config
         resources:
           requests:
-            cpu: 200m
+            cpu: 100m
             memory: 64Mi
           limits:
-            cpu: 300m
-            memory: 128Mi
+            cpu: 500m
+            memory: 256Mi
         readinessProbe:
           httpGet:
             path: /ready

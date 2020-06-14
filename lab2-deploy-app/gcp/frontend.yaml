@@ -29,14 +29,14 @@ spec:
       terminationGracePeriodSeconds: 5
       containers:
       - name: front
-        image: gcr.io/bank-of-anthos/frontend:v0.1.2
+        image: gcr.io/bank-of-anthos/frontend:v0.2.0
         volumeMounts:
         - name: publickey
           mountPath: "/root/.ssh"
           readOnly: true
         env:
         - name: VERSION
-          value: "v0.1.2"
+          value: "v0.2.0"
         - name: PORT
           value: "8080"
         - name: DEFAULT_USERNAME
@@ -60,6 +60,13 @@ spec:
             port: 8080
           initialDelaySeconds: 5
           periodSeconds: 5
+        resources:
+          requests:
+            cpu: 100m
+            memory: 64Mi
+          limits:
+            cpu: 500m
+            memory: 256Mi
       volumes:
       - name: publickey
         secret:
@@ -74,7 +81,7 @@ metadata:
   name: frontend
   namespace: boa
 spec:
-  type: ClusterIP
+  type: LoadBalancer
   selector:
     app: frontend
   ports:
