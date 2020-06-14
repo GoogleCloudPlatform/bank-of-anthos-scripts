@@ -14,19 +14,20 @@
 
 export PROJECT_ID=$(gcloud config get-value project)
 export EMAIL=$(gcloud config get-value account)
-export REPO_NAME="app-repo"
+export REPO_NAME="app-config-repo"
 export PROJECT_REPO_URL=https://source.developers.google.com/p/${PROJECT_ID}/r/${REPO_NAME}
+export ROOT=$HOME/hybrid-sme
 
-# create app-repo CSR repo
+# create CSR repo
 echo "*************** Welcome to Lab 2 - Cloud Build + CI/CD *********************** "
-echo "🚀 Creating app-repo"
+echo "🚀 Creating ${REPO_NAME}"
 git config --global user.email "$EMAIL"
 git config --global user.name "$USER"
 
 gcloud source repos create ${REPO_NAME}
 
 echo "🏠 Setting up local repo"
-cd $HOME
+cd $ROOT
 mkdir ${REPO_NAME}
 cd ${REPO_NAME}
 git init
@@ -59,7 +60,7 @@ cp gcp/* ${HOME}/${REPO_NAME}/gcp
 mkdir -p ${HOME}/${REPO_NAME}/onprem
 cp onprem/* ${HOME}/${REPO_NAME}/onprem
 
-echo "⏫ Pushing to app-repo master"
+echo "⏫ Pushing to ${REPO_NAME} master"
 cd $HOME/$REPO_NAME
 git add .
 git commit -m "cloudbuild.yaml, Bank of Anthos init"

@@ -17,6 +17,8 @@ echo "🏔 Lab 1 - Begin Fast Track"
 echo "⏰ This script will bootstrap an Anthos environment for you."
 
 export GCLOUD_ACCOUNT=$(gcloud config get-value account)
+export ROOT=$HOME/hybrid-sme
+mkdir -p $ROOT
 
 echo "☁️ Project setup"
 GCP_DEVREL_UNTRUSTED_FOLDER_ID="1053275019153"
@@ -25,7 +27,7 @@ PROJECT_ID="${USER}-sme-${DATE}"
 gcloud projects create $PROJECT_ID --folder=${GCP_DEVREL_UNTRUSTED_FOLDER_ID}
 gcloud config set project $PROJECT_ID
 gcloud alpha billing projects link $PROJECT_ID --billing-account $BILLING_ID
-cd $HOME; cd bank-of-anthos-scripts/lab1-install/
+cd $ROOT; cd bank-of-anthos-scripts/lab1-install/
 source ./env
 source ./common/install-tools.sh
 
@@ -37,11 +39,11 @@ echo "🐙 Bootstrap done! Set up ACM config repo..."
 export REPO_URL=https://source.developers.google.com/p/${PROJECT_ID}/r/config-repo
 git config credential.helper gcloud.sh
 gcloud source repos create config-repo
-cd $HOME
+cd $ROOT
 gcloud source repos clone config-repo
 cd config-repo
 
-cp -r $HOME/bank-of-anthos-scripts/lab1-install/acm/config-repo-source/* .
+cp -r $ROOT/bank-of-anthos-scripts/lab1-install/acm/config-repo-source/* .
 
 git add .
 git commit -m "Initialize config-repo"

@@ -12,7 +12,7 @@ spec:
       rego: |
         package asm.guardrails.peerauthnstrict
 
-        # VIOLATION peer authn settings do not set mTLS 
+        # VIOLATION peer authn settings do not set mTLS
         violation[{"msg": msg }] {
           p := input.review.object
 
@@ -22,6 +22,6 @@ spec:
           not p.spec.mtls.mode == "STRICT"
           not p.spec.mtls == {}
           not p.spec.mtls == null
-          
+
           msg := "spec.mtls does not include STRICT mTLS settings"
         }
