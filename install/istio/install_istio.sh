@@ -24,7 +24,7 @@ echo "### "
 
 # Set vars for DIRs
 ISTIO_VERSION="${ISTIO_VERSION:-1.6.2}"
-export WORK_DIR=${WORK_DIR:="${PWD}/workdir"}
+export WORK_DIR=`pwd`/workdir
 export ISTIO_DIR=$WORK_DIR/istio-$ISTIO_VERSION
 export BASE_DIR=${BASE_DIR:="${PWD}/.."}
 echo "BASE_DIR set to $BASE_DIR"
@@ -37,7 +37,7 @@ echo "Downloading Istio ${ISTIO_VERSION}..."
 curl -L https://git.io/getLatestIstio | ISTIO_VERSION=$ISTIO_VERSION sh -
 
 echo "Moving istioctl into WORKDIR..."
-mv ${ISTIO_DIR}/bin/istioctl ${WORK_DIR}/
+mv istio-$ISTIO_VERSION/bin/istioctl ${WORK_DIR}/bin
 
 # Prepare for install
 kubectl create namespace istio-system
