@@ -15,50 +15,61 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend
+  name: balancereader
   namespace: boa
 spec:
   selector:
     matchLabels:
-      app: frontend
+      app: balancereader
   template:
     metadata:
       labels:
-        app: frontend
+        app: balancereader
     spec:
       terminationGracePeriodSeconds: 5
       containers:
-      - name: front
-        image: gcr.io/bank-of-anthos/frontend:v0.1.2
+      - name: reader
+        image: gcr.io/bank-of-anthos/balancereader:v0.2.0
         volumeMounts:
         - name: publickey
           mountPath: "/root/.ssh"
           readOnly: true
         env:
         - name: VERSION
-          value: "v0.1.2"
+          value: "v0.2.0"
         - name: PORT
           value: "8080"
-        - name: DEFAULT_USERNAME
-          valueFrom:
-            configMapKeyRef:
-              name: default-data-config
-              key: DEFAULT_USER_USERNAME
-        - name: DEFAULT_PASSWORD
-          valueFrom:
-            configMapKeyRef:
-              name: default-data-config
-              key: DEFAULT_LOGIN_PASSWORD
+        - name: POLL_MS
+          value: "100"
+        - name: CACHE_SIZE
+          value: "1000000"
+        # tell Java to obey container memory limits
+        - name: JVM_OPTS
+          value: "-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
         envFrom:
         - configMapRef:
             name: environment-config
+        # add ledger-db credentials from ConfigMap
         - configMapRef:
-            name: service-api-config
+            name: ledger-db-config
+        resources:
+          requests:
+            cpu: 100m
+            memory: 512Mi
+          limits:
+            cpu: 500m
+            memory: 1Gi
         readinessProbe:
           httpGet:
             path: /ready
             port: 8080
           initialDelaySeconds: 5
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /healthy
+            port: 8080
+          initialDelaySeconds: 120
           periodSeconds: 5
       volumes:
       - name: publickey
@@ -71,13 +82,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: frontend
+  name: balancereader
   namespace: boa
 spec:
   type: ClusterIP
   selector:
-    app: frontend
+    app: balancereader
   ports:
   - name: http
-    port: 80
+    port: 8080
     targetPort: 8080

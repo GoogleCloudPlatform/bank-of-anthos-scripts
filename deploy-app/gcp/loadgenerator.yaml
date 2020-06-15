@@ -32,7 +32,7 @@ spec:
       restartPolicy: Always
       containers:
       - name: main
-        image: gcr.io/bank-of-anthos/loadgenerator:v0.1.2
+        image: gcr.io/bank-of-anthos/loadgenerator:v0.2.0
         env:
         - name: FRONTEND_ADDR
           value: "frontend:80"
@@ -40,8 +40,8 @@ spec:
           value: "5"
         resources:
           requests:
-            cpu: 300m
-            memory: 256Mi
+            cpu: 100m
+            memory: 512Mi
           limits:
             cpu: 500m
-            memory: 512Mi
+            memory: 1Gi

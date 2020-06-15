@@ -39,3 +39,9 @@ mv kops-linux-amd64 $WORK_DIR/bin/kops
 gsutil cp gs://config-management-release/released/latest/linux_amd64/nomos nomos
 chmod +x nomos
 mv nomos $WORK_DIR/bin
+
+# Docker pull read-yaml command for ACM
+docker pull gcr.io/config-management-release/read-yaml:latest
+
+# install tree
+sudo apt-get install tree
