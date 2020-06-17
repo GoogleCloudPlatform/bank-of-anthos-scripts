@@ -27,7 +27,7 @@ PROJECT_ID="${USER}-sme-${DATE}"
 gcloud projects create $PROJECT_ID --folder=${GCP_DEVREL_UNTRUSTED_FOLDER_ID}
 gcloud config set project $PROJECT_ID
 gcloud alpha billing projects link $PROJECT_ID --billing-account $BILLING_ID
-cd $ROOT; cd bank-of-anthos-scripts/lab1-install/
+cd $ROOT; cd bank-of-anthos-scripts/install/
 source ./env
 source ./common/install-tools.sh
 
@@ -43,7 +43,7 @@ cd $ROOT
 gcloud source repos clone config-repo
 cd config-repo
 
-cp -r $ROOT/bank-of-anthos-scripts/lab1-install/acm/config-repo-source/* .
+cp -r $ROOT/bank-of-anthos-scripts/install/acm/config-repo-source/* .
 
 git add .
 git commit -m "Initialize config-repo"
