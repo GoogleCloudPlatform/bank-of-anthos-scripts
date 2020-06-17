@@ -28,43 +28,36 @@ gcloud source repos create $REPO_NAME
 
 echo "🏠 Setting up local repo"
 cd $ROOT
-mkdir $REPO_NAME
-cd $REPO_NAME
-git init
-git config credential.helper gcloud.sh
-git remote add origin $PROJECT_REPO_URL
+gcloud source repos clone ${REPO_NAME}
 
-touch "helloworld.txt"
-git add .
-git commit -m "init app repo"
-git push -u origin master -f
+echo "🏗 Copying cloudbuild.yaml into app repo"
+cp ${ROOT}/bank-of-anthos-scripts/deploy-app/cloudbuild.yaml ${ROOT}/${REPO_NAME}
 
 echo "🔄 Creating a Cloud Build trigger for app repo"
 gcloud beta builds triggers create cloud-source-repositories \
---repo=$REPO_NAME \
+--repo=${REPO_NAME} \
 --branch-pattern="master" \
 --build-config="cloudbuild.yaml"
 
-echo "🏗 Copying cloudbuild.yaml into app repo"
-rm $ROOT/$REPO_NAME/helloworld.txt
-cd $ROOT/bank-of-anthos-scripts/lab2-deploy-app
-cp ./cloudbuild.yaml $ROOT/$REPO_NAME
 
 echo "⛵️ Generating Istio service entries for gcp cluster"
+mkdir -p ${ROOT}/${REPO_NAME}/gcp
+mkdir -p ${ROOT}/${REPO_NAME}/onprem
+
 GWIP_ONPREM=$(kubectl --context=onprem get -n istio-system service istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
-sed 's/GWIP_ONPREM/'$GWIP_ONPREM'/g' gcp/service-entries.yaml.tpl > gcp/service-entries.yaml
+sed 's/GWIP_ONPREM/'$GWIP_ONPREM'/g' $ROOT/bank-of-anthos-scripts/deploy-app/gcp/service-entries.yaml.tpl > ${ROOT}/${REPO_NAME}/gcp/service-entries.yaml
 
 echo "🏦 Copying Bank of Anthos manifests into app repo"
-mkdir -p $ROOT/$REPO_NAME/gcp
-cp gcp/* $ROOT/$REPO_NAME/gcp
-mkdir -p $ROOT/$REPO_NAME/onprem
-cp onprem/* $ROOT/$REPO_NAME/onprem
+cp $ROOT/bank-of-anthos-scripts/deploy-app/gcp/* ${ROOT}/${REPO_NAME}/gcp
+cp $ROOT/bank-of-anthos-scripts/deploy-app/onprem/* ${ROOT}/${REPO_NAME}/onprem
+
 
 echo "⏫ Pushing to $REPO_NAME master"
 cd $ROOT/$REPO_NAME
 git add .
 git commit -m "cloudbuild.yaml, Bank of Anthos init"
 git push -u origin master
+
 
 echo "⭐️ Navigate to this URL to view the status of Cloud Build:"
 echo "http://console.cloud.google.com/cloud-build/dashboard?project=${PROJECT_ID}"
