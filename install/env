@@ -1,8 +1,6 @@
 export ROOT=$HOME/hybrid-sme
-cd $ROOT
 export BASE_DIR=$PWD
 echo $BASE_DIR
 export WORK_DIR=$BASE_DIR/workdir
 echo $WORK_DIR
 export PATH=$PATH:$WORK_DIR/bin:
-source ./common/settings.env
