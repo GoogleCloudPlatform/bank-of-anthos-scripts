@@ -37,14 +37,16 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
 
     echo "🐙 Deleting CSR repos..."
     gcloud source repos delete config-repo --quiet
-    gcloud source repos delete app-repo --quiet
+    gcloud source repos delete app-config-repo --quiet
+    gcloud source repos delete source-repo --quiet
 
     # Delete remaining files and folders
     echo "🗑 Finishing up..."
     rm -rf $HOME/.kube/config \
-           $HOME/config-repo \
-           $HOME/app-repo \
-           $HOME/gopath \
+           $HOME/hybrid-sme/app-config-repo \
+           $HOME/hybrid-sme/config-repo \
+           $HOME/hybrid-sme/source-repo \
+           $HOME/hybrid-sme/cloud-builders-community \
            $HOME/.ssh/id_rsa.nomos.*
 
     rm -f $HOME/.customize_environment
