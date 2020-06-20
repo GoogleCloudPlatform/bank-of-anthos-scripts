@@ -1,6 +1,4 @@
 globalPolicyEvaluationMode: ENABLE
-admissionWhitelistPatterns:
-- namePattern: gcr.io/bank-of-anthos/*
 defaultAdmissionRule:
   evaluationMode: REQUIRE_ATTESTATION
   enforcementMode: ENFORCED_BLOCK_AND_AUDIT_LOG

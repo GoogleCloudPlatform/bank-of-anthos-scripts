@@ -22,6 +22,6 @@ steps:
         echo "attesting $$SERVICE"
         ./create_binauthz_attestation.sh \
             --artifact-url gcr.io/${PROJECT_ID}/bank-of-anthos/$$SERVICE:${COMMIT_SHA} \
-            --attestor projects/${PROJECT_ID}/attestors/manual-attestor \
-            --keyversion projects/${PROJECT_ID}/locations/global/keyRings/bank-of-anthos-binauthz-keys/cryptoKeys/manual-key/cryptoKeyVersions/1
+            --attestor projects/${PROJECT_ID}/attestors/boa-attestor \
+            --keyversion projects/${PROJECT_ID}/locations/global/keyRings/bank-of-anthos/cryptoKeys/binauthz-key/cryptoKeyVersions/1
       done
