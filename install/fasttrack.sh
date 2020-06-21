@@ -18,15 +18,20 @@ echo "⏰ This script will bootstrap an Anthos environment for you."
 
 export GCLOUD_ACCOUNT=$(gcloud config get-value account)
 export ROOT=$HOME/hybrid-sme
-mkdir -p $ROOT
 
-echo "☁️ Project setup"
-GCP_DEVREL_UNTRUSTED_FOLDER_ID="1053275019153"
-DATE=`date +"%m%d%y-%H%M"`
-PROJECT_ID="${USER}-sme-${DATE}"
-gcloud projects create $PROJECT_ID --folder=${GCP_DEVREL_UNTRUSTED_FOLDER_ID}
-gcloud config set project $PROJECT_ID
-gcloud alpha billing projects link $PROJECT_ID --billing-account $BILLING_ID
+# Check if project setup is needed
+if [ $1 == "setup" ]
+then
+  echo "☁️ Project setup"
+  mkdir -p $ROOT
+  GCP_DEVREL_UNTRUSTED_FOLDER_ID="1053275019153"
+  DATE=`date +"%m%d%y-%H%M"`
+  PROJECT_ID="${USER}-sme-${DATE}"
+  gcloud projects create $PROJECT_ID --folder=${GCP_DEVREL_UNTRUSTED_FOLDER_ID}
+  gcloud config set project $PROJECT_ID
+  gcloud alpha billing projects link $PROJECT_ID --billing-account $BILLING_ID
+fi
+
 cd $ROOT; cd bank-of-anthos-scripts/install/
 source ./env
 source ./common/install-tools.sh
