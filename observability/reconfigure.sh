@@ -45,7 +45,7 @@ mkdir -p ${ROOT}/${REPO_NAME}/onprem
 sed 's/IP_1/'$IP_1'/g; s/IP_2/'$IP_2'/g; s/IP_3/'$IP_3'/g' $ROOT/bank-of-anthos-scripts/observability/gcp/service-entries.yaml.tpl > $ROOT/bank-of-anthos-scripts/observability/gcp/service-entries.yaml
 
 echo "🏦 Copying Bank of Anthos manifests into app repo"
-cp $ROOT/bank-of-anthos-scripts/observability/gcp/* ${ROOT}/${REPO_NAME}/gcp
+cp $ROOT/bank-of-anthos-scripts/observability/gcp/*.yaml ${ROOT}/${REPO_NAME}/gcp
 cp $ROOT/bank-of-anthos-scripts/deploy-app/onprem/* ${ROOT}/${REPO_NAME}/onprem
 
 echo "⏫ Pushing to $REPO_NAME master"

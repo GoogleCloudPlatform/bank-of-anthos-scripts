@@ -22,6 +22,7 @@ echo "⏰ This script will reconfigure your environment and introduce new config
 cd $ROOT/bank-of-anthos-scripts/install/
 ./fasttrack.sh
 
+cat $HOME/.ssh/id_rsa.nomos.pub
 read -n 1 -p "Please register your SSH key before continuing. Hit any key to continue."
 
 cd $ROOT/bank-of-anthos-scripts/observability/

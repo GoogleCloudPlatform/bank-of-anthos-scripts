@@ -17,11 +17,11 @@
 # Variables
 
 if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
-    echo "🧹 Cleaning up Anthos environment in project: ${PROJECT_ID}"
-    source ./env
-
     export PROJECT=$(gcloud config get-value project)
     export WORK_DIR=${WORK_DIR:="${PWD}/workdir"}
+    
+    echo "🧹 Cleaning up Anthos environment in project: ${PROJECT}"
+    source ./env
 
     echo "☁️ Removing Kubernetes clusters from your project... This may take a few minutes ..."
     ./kops/cleanup-remote-gce.sh &> ${WORK_DIR}/cleanup-remote.log &
@@ -40,6 +40,9 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
     gcloud source repos delete app-config-repo --quiet
     gcloud source repos delete source-repo --quiet
 
+    echo "☸️ Deleting onprem context in Secret Manager"
+    gcloud secrets delete ${SECRET_NAME}
+
     # Delete remaining files and folders
     echo "🗑 Finishing up..."
     rm -rf $HOME/.kube/config \
@@ -52,7 +55,7 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
     rm -f $HOME/.customize_environment
     rm -rf $WORK_DIR
 
-    echo "✅ Cleanup complete. You can continue using ${PROJECT_ID}."
+    echo "✅ Cleanup complete. You can continue using ${PROJECT}."
 
 else
     echo "This has only been tested in GCP Cloud Shell.  Only Linux (debian) is supported".

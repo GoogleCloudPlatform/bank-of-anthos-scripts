@@ -39,6 +39,7 @@ source ./common/install-tools.sh
 echo "🚀 Running bootstrap script - this will take about 10 minutes."
 ./bootstrap.sh
 
+read -n 1 -p "Login to your onprem cluster in the Cloud Console with KSA token above. Hit any key to continue."
 
 echo "🐙 Bootstrap done! Set up ACM config repo..."
 export REPO_URL=https://source.developers.google.com/p/${PROJECT_ID}/r/config-repo
