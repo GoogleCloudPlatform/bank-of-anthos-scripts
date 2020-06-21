@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-export REPO_NAME="app-repo"
+export REPO_NAME="app-config-repo"
 export PROJECT_REPO_URL=https://source.developers.google.com/p/${PROJECT_ID}/r/${REPO_NAME}
 export ROOT=$HOME/hybrid-sme
 IP_1=$(kubectl --context=onprem get -n istio-system service istio-ingressgateway -o jsonpath='{.spec.clusterIP}')
@@ -42,7 +42,7 @@ gcloud beta builds triggers create cloud-source-repositories \
 echo "⛵️ Generating Istio service entries for gcp cluster"
 mkdir -p ${ROOT}/${REPO_NAME}/gcp
 mkdir -p ${ROOT}/${REPO_NAME}/onprem
-sed 's/IP_1/'$IP_1'/g; s/IP_2/'$IP_2'/g; s/IP_3/'$IP_3'/g' gcp/service-entries.yaml.tpl > gcp/service-entries.yaml
+sed 's/IP_1/'$IP_1'/g; s/IP_2/'$IP_2'/g; s/IP_3/'$IP_3'/g' $ROOT/bank-of-anthos-scripts/observability/gcp/service-entries.yaml.tpl > $ROOT/bank-of-anthos-scripts/observability/gcp/service-entries.yaml
 
 echo "🏦 Copying Bank of Anthos manifests into app repo"
 cp $ROOT/bank-of-anthos-scripts/observability/gcp/* ${ROOT}/${REPO_NAME}/gcp
