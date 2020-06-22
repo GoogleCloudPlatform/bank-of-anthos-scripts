@@ -17,11 +17,11 @@
 # Variables
 
 if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
+    export PROJECT_ID=$(gcloud config get-value project)
+    export WORK_DIR=${WORK_DIR:="${PWD}/workdir"}
+    
     echo "🧹 Cleaning up Anthos environment in project: ${PROJECT_ID}"
     source ./env
-
-    export PROJECT=$(gcloud config get-value project)
-    export WORK_DIR=${WORK_DIR:="${PWD}/workdir"}
 
     echo "☁️ Removing Kubernetes clusters from your project... This may take a few minutes ..."
     ./kops/cleanup-remote-gce.sh &> ${WORK_DIR}/cleanup-remote.log &
@@ -39,6 +39,12 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
     gcloud source repos delete config-repo --quiet
     gcloud source repos delete app-config-repo --quiet
     gcloud source repos delete source-repo --quiet
+
+    echo "☸️ Deleting onprem context in Secret Manager"
+    gcloud secrets delete ${SECRET_NAME}
+
+    echo "🔄 Deleting Cloud Build trigger for app config repo"
+    gcloud beta builds triggers delete trigger
 
     # Delete remaining files and folders
     echo "🗑 Finishing up..."
