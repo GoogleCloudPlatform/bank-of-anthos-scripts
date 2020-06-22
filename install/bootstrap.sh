@@ -26,16 +26,15 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
     echo "WORK_DIR set to $WORK_DIR"
     gcloud config set project $PROJECT
 
-    echo "🛠 Installing client tools, setting env..."
-    source ./common/settings.env
+    echo "🛠 Installing client tools."
     ./common/install-tools.sh
 
-    echo "🚪 Configuring Cloud Shell to re-init environment if disconnected..."
+    echo "🚪 Configuring Cloud Shell to re-init environment if disconnected."
     echo 'source $ROOT/bank-of-anthos-scripts/install/env' >> ~/.bashrc
     echo 'source $ROOT/bank-of-anthos-scripts/install/common/install-tools.sh' >> ~/.bashrc
 
 
-    echo "🔆 Enabling GCP APIs... This may take up to 5 minutes."
+    echo "🔆 Enabling GCP APIs. This may take up to 5 minutes."
     gcloud services enable \
     container.googleapis.com \
     compute.googleapis.com \
@@ -53,39 +52,39 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
     cloudbuild.googleapis.com \
     secretmanager.googleapis.com
 
-    echo "☸️ Creating 2 Kubernetes clusters in parallel..."
+    echo "☸️ Creating 2 Kubernetes clusters in parallel."
     echo -e "\nMultiple tasks are running asynchronously to setup your environment.  It may appear frozen, but you can check the logs in $WORK_DIR for additional details in another terminal window."
     ./gke/provision-gke.sh &> ${WORK_DIR}/provision-gke.log &
     ./kops/provision-remote-gce.sh &> ${WORK_DIR}/provision-remote.log &
     wait
 
     # generate kops kubecfg
-    echo "🎢 Finishing Kops setup, creating kubeconfig..."
+    echo "🎢 Finishing Kops setup, creating kubeconfig."
     ./common/connect-kops-remote.sh
 
     # configure Kops firewall rules + continually allow Kops kubectl access
     ./kops/start-firewall-updater.sh
 
     # install service mesh: Istio, replicated control plane multicluster
-    echo "🕸 Installing service mesh on both clusters..."
+    echo "🕸 Installing service mesh on both clusters."
     CONTEXT="gcp" ./istio/install_istio.sh
     CONTEXT="onprem" ./istio/install_istio.sh
 
     # configure DNS stubdomains for cross-cluster service name resolution
-    echo "🌏 Connecting the 2 Istio control planes into one mesh..."
+    echo "🌏 Connecting the 2 Istio control planes into one mesh."
     ./istio/coredns.sh
 
     # ACM pre-install
-    echo "🐙 Installing Anthos Config Management on both clusters..."
+    echo "🐙 Installing Anthos Config Management on both clusters."
     kubectx gcp && ./acm/install-config-operator.sh
     kubectx onprem && ./acm/install-config-operator.sh
 
     # Cloud Build setup
-    echo "🔄 Setting up Cloud Build for later..."
+    echo "🔄 Setting up Cloud Build for later."
     ./cloudbuild/setup.sh
 
     # install GKE connect on both clusters / print onprem login token
-    echo "⬆️ Installing GKE Connect on both clusters..."
+    echo "⬆️ Installing GKE Connect on both clusters."
     ./gke/connect-hub.sh
     ./kops/connect-hub.sh
 

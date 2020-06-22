@@ -19,23 +19,23 @@
 if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
     export PROJECT_ID=$(gcloud config get-value project)
     export WORK_DIR=${WORK_DIR:="${PWD}/workdir"}
-    
+
     echo "🧹 Cleaning up Anthos environment in project: ${PROJECT_ID}"
     source ./env
 
-    echo "☁️ Removing Kubernetes clusters from your project... This may take a few minutes ..."
+    echo "☁️ Removing Kubernetes clusters from your project. This may take a few minutes ."
     ./kops/cleanup-remote-gce.sh &> ${WORK_DIR}/cleanup-remote.log &
     ./gke/cleanup-gke.sh &> ${WORK_DIR}/cleanup-gke.log &
     wait
 
 
-    echo "🔥 Cleaning up forwarding and firewall rules..."
+    echo "🔥 Cleaning up forwarding and firewall rules."
     gcloud compute forwarding-rules delete $(gcloud compute forwarding-rules list --format="value(name)") --region us-central1 --quiet
     gcloud compute target-pools delete $(gcloud compute target-pools list --format="value(name)") --region us-central1 --quiet
     NODE_RULE="`gcloud compute firewall-rules list --format="table(name,targetTags.list():label=TARGET_TAGS)" | grep onprem-k8s-local-k8s-io-role-node | awk '{print $1}'`"
     gcloud compute firewall-rules delete ${NODE_RULE} --quiet
 
-    echo "🐙 Deleting CSR repos..."
+    echo "🐙 Deleting CSR repos."
     gcloud source repos delete config-repo --quiet
     gcloud source repos delete app-config-repo --quiet
     gcloud source repos delete source-repo --quiet
@@ -47,7 +47,7 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
     gcloud beta builds triggers delete trigger
 
     # Delete remaining files and folders
-    echo "🗑 Finishing up..."
+    echo "🗑 Finishing up."
     rm -rf $HOME/.kube/config \
            $HOME/hybrid-sme/app-config-repo \
            $HOME/hybrid-sme/config-repo \
