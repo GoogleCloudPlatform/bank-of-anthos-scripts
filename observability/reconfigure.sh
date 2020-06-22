@@ -15,7 +15,7 @@
 export REPO_NAME="app-config-repo"
 export PROJECT_REPO_URL=https://source.developers.google.com/p/${PROJECT_ID}/r/${REPO_NAME}
 export ROOT=$HOME/hybrid-sme
-IP_1=$(kubectl --context=onprem get -n istio-system service istio-ingressgateway -o jsonpath='{.spec.clusterIP}')
+IP_1=$(kubectl --context=gcp get -n istio-system service istio-ingressgateway -o jsonpath='{.spec.clusterIP}')
 IP_2=$(kubectl --context=onprem get -n istio-system service istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 IP_3=$(kubectl --context=gcp get -n istio-system service istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 
