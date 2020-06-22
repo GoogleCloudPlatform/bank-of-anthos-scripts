@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# This fast track script is intended only for Lab 1. It creates a new GCP project. If you want to spin up the Lab 1-2 environment on your existing project use install/spin-up.sh.
 
 echo "🏔 Lab 1 - Begin Fast Track"
 echo "⏰ This script will bootstrap an Anthos environment for you."
