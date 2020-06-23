@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# This fast track script is intended only for Lab 1. It creates a new GCP project. If you want to spin up the Lab 1-2 environment on your existing project use install/spin-up.sh.
 
 echo "🏔 Lab 1 - Begin Fast Track"
 echo "⏰ This script will bootstrap an Anthos environment for you."
@@ -24,10 +25,11 @@ if [ $1 == "setup" ]
 then
   echo "☁️ Project setup"
   mkdir -p $ROOT
-  GCP_DEVREL_UNTRUSTED_FOLDER_ID="1053275019153"
+  # GCP_DEVREL_UNTRUSTED_FOLDER_ID="1053275019153"
+  EXPERIMENTAL_ANTHOS_ID="130886061063"
   DATE=`date +"%m%d%y-%H%M"`
   PROJECT_ID="${USER}-sme-${DATE}"
-  gcloud projects create $PROJECT_ID --folder=${GCP_DEVREL_UNTRUSTED_FOLDER_ID}
+  gcloud projects create $PROJECT_ID --folder=${EXPERIMENTAL_ANTHOS_ID}
   gcloud config set project $PROJECT_ID
   gcloud alpha billing projects link $PROJECT_ID --billing-account $BILLING_ID
 fi
@@ -57,11 +59,6 @@ git push -u origin master
 
 
 echo "🔑 Granting ACM config-repo access..."
-ssh-keygen -t rsa -b 4096 \
--C "$GCLOUD_ACCOUNT" \
--N '' \
--f $HOME/.ssh/id_rsa.nomos
-
 kubectx gcp
 kubectl create secret generic git-creds \
 --namespace=config-management-system \

@@ -19,35 +19,44 @@
 if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
     export PROJECT_ID=$(gcloud config get-value project)
     export WORK_DIR=${WORK_DIR:="${PWD}/workdir"}
-    
+
     echo "🧹 Cleaning up Anthos environment in project: ${PROJECT_ID}"
     source ./env
 
-    echo "☁️ Removing Kubernetes clusters from your project... This may take a few minutes ..."
+
+    echo "☁️ Unregistering clusters from Anthos..."
+    gcloud container hub memberships delete gcp --quiet
+    gcloud container hub memberships delete onprem --quiet
+
+
+
+    echo "☁️ Removing Kubernetes clusters from your project. This may take a few minutes ."
     ./kops/cleanup-remote-gce.sh &> ${WORK_DIR}/cleanup-remote.log &
     ./gke/cleanup-gke.sh &> ${WORK_DIR}/cleanup-gke.log &
     wait
 
-
-    echo "🔥 Cleaning up forwarding and firewall rules..."
+    echo "🔥 Cleaning up forwarding and firewall rules."
     gcloud compute forwarding-rules delete $(gcloud compute forwarding-rules list --format="value(name)") --region us-central1 --quiet
     gcloud compute target-pools delete $(gcloud compute target-pools list --format="value(name)") --region us-central1 --quiet
     NODE_RULE="`gcloud compute firewall-rules list --format="table(name,targetTags.list():label=TARGET_TAGS)" | grep onprem-k8s-local-k8s-io-role-node | awk '{print $1}'`"
     gcloud compute firewall-rules delete ${NODE_RULE} --quiet
 
-    echo "🐙 Deleting CSR repos..."
+    echo "🐙 Deleting CSR repos."
     gcloud source repos delete config-repo --quiet
     gcloud source repos delete app-config-repo --quiet
     gcloud source repos delete source-repo --quiet
 
-    echo "☸️ Deleting onprem context in Secret Manager"
-    gcloud secrets delete ${SECRET_NAME}
+    echo "☸️ Deleting onprem context from Secret Manager"
+    gcloud secrets delete onprem-context --quiet
 
     echo "🔄 Deleting Cloud Build trigger for app config repo"
-    gcloud beta builds triggers delete trigger
+    gcloud beta builds triggers delete cloud-source-repositories --quiet
 
     # Delete remaining files and folders
-    echo "🗑 Finishing up..."
+    echo "🗑 Finishing up."
+    gcloud iam service-accounts delete kops-firewall-updater
+    gcloud iam service-accounts delete anthos-connect
+
     rm -rf $HOME/.kube/config \
            $HOME/hybrid-sme/app-config-repo \
            $HOME/hybrid-sme/config-repo \
