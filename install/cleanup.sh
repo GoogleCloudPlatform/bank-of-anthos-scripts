@@ -23,11 +23,17 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
     echo "🧹 Cleaning up Anthos environment in project: ${PROJECT_ID}"
     source ./env
 
+
+    echo "☁️ Unregistering clusters from Anthos..."
+    gcloud container hub memberships delete gcp --quiet
+    gcloud container hub memberships delete onprem --quiet
+
+
+
     echo "☁️ Removing Kubernetes clusters from your project. This may take a few minutes ."
     ./kops/cleanup-remote-gce.sh &> ${WORK_DIR}/cleanup-remote.log &
     ./gke/cleanup-gke.sh &> ${WORK_DIR}/cleanup-gke.log &
     wait
-
 
     echo "🔥 Cleaning up forwarding and firewall rules."
     gcloud compute forwarding-rules delete $(gcloud compute forwarding-rules list --format="value(name)") --region us-central1 --quiet
@@ -40,11 +46,11 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
     gcloud source repos delete app-config-repo --quiet
     gcloud source repos delete source-repo --quiet
 
-    echo "☸️ Deleting onprem context in Secret Manager"
-    gcloud secrets delete ${SECRET_NAME}
+    echo "☸️ Deleting onprem context from Secret Manager"
+    gcloud secrets delete onprem-context --quiet
 
     echo "🔄 Deleting Cloud Build trigger for app config repo"
-    gcloud beta builds triggers delete trigger
+    gcloud beta builds triggers delete cloud-source-repositories --quiet
 
     # Delete remaining files and folders
     echo "🗑 Finishing up."
