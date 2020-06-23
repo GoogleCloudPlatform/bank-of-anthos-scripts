@@ -14,11 +14,9 @@
 
 export PROJECT_ID=$(gcloud config get-value project)
 export EMAIL=$(gcloud config get-value account)
-export REPO_NAME="app-config-repo"
 export ROOT=$HOME/hybrid-sme
 
 echo "👋 Welcome back to the Hybrid SME Academy labs."
-echo "⚡️ Setting back up your environment."
 
 # Lab 1 fast track, minus project creation and billing
 ./fasttrack.sh
