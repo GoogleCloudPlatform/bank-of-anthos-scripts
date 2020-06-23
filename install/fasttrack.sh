@@ -59,11 +59,6 @@ git push -u origin master
 
 
 echo "🔑 Granting ACM config-repo access..."
-ssh-keygen -t rsa -b 4096 \
--C "$GCLOUD_ACCOUNT" \
--N '' \
--f $HOME/.ssh/id_rsa.nomos
-
 kubectx gcp
 kubectl create secret generic git-creds \
 --namespace=config-management-system \
