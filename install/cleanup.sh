@@ -54,6 +54,8 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
 
     # Delete remaining files and folders
     echo "🗑 Finishing up."
+    gcloud iam service-accounts delete kops-firewall-updater
+
     rm -rf $HOME/.kube/config \
            $HOME/hybrid-sme/app-config-repo \
            $HOME/hybrid-sme/config-repo \
