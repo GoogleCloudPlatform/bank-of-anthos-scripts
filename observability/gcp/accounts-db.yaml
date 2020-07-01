@@ -45,7 +45,7 @@ spec:
               name: default-data-config
         ports:
           - containerPort: 5432
-            name: postgredb
+            name: tcp
         resources:
           requests:
             cpu: 100m
