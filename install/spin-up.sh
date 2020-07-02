@@ -18,13 +18,13 @@ export ROOT=$HOME/hybrid-sme
 
 echo "👋 Welcome back to the Hybrid SME Academy labs."
 
-# Lab 1 fast track, minus project creation and billing
+cd $ROOT/bank-of-anthos-scripts/install/
 ./fasttrack.sh
-
 
 # Wait for boa namespace to be synced from ACM
 echo "💤 Sleeping 3 minutes to wait for ACM to be ready"
 sleep 3m
 
 # Lab 2 fast track
-../deploy-app/fasttrack.sh
+cd $ROOT/bank-of-anthos-scripts/deploy-app/
+./fasttrack.sh

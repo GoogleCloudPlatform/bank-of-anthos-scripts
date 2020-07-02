@@ -29,7 +29,6 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
     gcloud container hub memberships delete onprem --quiet
 
 
-
     echo "☁️ Removing Kubernetes clusters from your project. This may take a few minutes ."
     ./kops/cleanup-remote-gce.sh &> ${WORK_DIR}/cleanup-remote.log &
     ./gke/cleanup-gke.sh &> ${WORK_DIR}/cleanup-gke.log &
@@ -52,11 +51,13 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
     echo "🔄 Deleting Cloud Build trigger for app config repo"
     gcloud beta builds triggers delete cloud-source-repositories --quiet
 
-    # Delete remaining files and folders
-    echo "🗑 Finishing up."
+    echo "☁️ Deleting service accounts"
     gcloud iam service-accounts delete kops-firewall-updater
     gcloud iam service-accounts delete anthos-connect
 
+
+    # Delete remaining files and folders
+    echo "🗑 Finishing up."
     rm -rf $HOME/.kube/config \
            $HOME/hybrid-sme/app-config-repo \
            $HOME/hybrid-sme/config-repo \
