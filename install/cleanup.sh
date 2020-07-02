@@ -49,7 +49,7 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
     gcloud secrets delete onprem-context --quiet
 
     echo "🔄 Deleting Cloud Build trigger for app config repo"
-    gcloud beta builds triggers delete cloud-source-repositories --quiet
+    gcloud beta builds triggers delete trigger --quiet
 
     echo "☁️ Deleting service accounts"
     gcloud iam service-accounts delete kops-firewall-updater
