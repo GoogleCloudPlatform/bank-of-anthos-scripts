@@ -22,8 +22,8 @@ echo "⏰ This script will reconfigure your environment and introduce new config
 cd $ROOT/bank-of-anthos-scripts/install/
 ./fasttrack.sh
 
-echo "💤 Sleeping for 3 minutes to wait for the boa namespace to be added by ACM..."
-sleep 3m
+echo "💤 Sleeping for 5 minutes to wait for the boa namespace to be added by ACM..."
+sleep 5m
 
 echo "🌋 Reconfiguring your environment to introduce problems..."
 cd $ROOT/bank-of-anthos-scripts/observability/
