@@ -79,12 +79,6 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
     kubectx gcp && ./acm/install-config-operator.sh
     kubectx onprem && ./acm/install-config-operator.sh
 
-    echo "🔑 Creating a Cloud Source Repos ssh key to use later."
-    ssh-keygen -t rsa -b 4096 \
-    -C "$GCLOUD_ACCOUNT" \
-    -N '' \
-    -f $HOME/.ssh/id_rsa.sme
-
     # Cloud Build setup
     echo "🔄 Setting up Cloud Build for later."
     ./cloudbuild/setup.sh
