@@ -22,8 +22,8 @@ cd $ROOT/bank-of-anthos-scripts/install/
 ./fasttrack.sh
 
 # Wait for boa namespace to be synced from ACM
-echo "💤 Sleeping 3 minutes to wait for ACM to be ready"
-sleep 3m
+echo "💤 Sleeping 5 minutes to wait for ACM to be ready"
+sleep 5m
 
 # Lab 2 fast track
 cd $ROOT/bank-of-anthos-scripts/deploy-app/
