@@ -21,9 +21,6 @@ echo "👋 Welcome back to the Hybrid SME Academy labs."
 cd $ROOT/bank-of-anthos-scripts/install/
 ./fasttrack.sh
 
-cat $HOME/.ssh/id_rsa.nomos.pub
-read -n 1 -p "Please register your SSH key before continuing. Hit any key to continue."
-
 # Wait for boa namespace to be synced from ACM
 echo "💤 Sleeping 3 minutes to wait for ACM to be ready"
 sleep 3m

@@ -59,15 +59,17 @@ git push -u origin master
 
 
 echo "🔑 Granting ACM config-repo access..."
+# do *not* run ssh-keygen again. this key persists in the user's environment after cleanup.
+
 kubectx gcp
 kubectl create secret generic git-creds \
 --namespace=config-management-system \
---from-file=ssh=$HOME/.ssh/id_rsa.nomos
+--from-file=ssh=$HOME/.ssh/id_rsa.sme
 
 kubectx onprem
 kubectl create secret generic git-creds \
 --namespace=config-management-system \
---from-file=ssh=$HOME/.ssh/id_rsa.nomos
+--from-file=ssh=$HOME/.ssh/id_rsa.sme
 
 echo "⬇️ Creating ConfigManagement CRD in both clusters..."
 export ONPREM=onprem
