@@ -80,6 +80,6 @@ spec:
   selector:
     app: ledger-db
   ports:
-  - name: postgres
+  - name: tcp
     port: 5432
     targetPort: 5432
