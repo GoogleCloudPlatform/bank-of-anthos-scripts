@@ -52,9 +52,11 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
     gcloud beta builds triggers delete trigger --quiet
 
     echo "☁️ Deleting service accounts"
-    gcloud iam service-accounts delete kops-firewall-updater
-    gcloud iam service-accounts delete anthos-connect
+    gcloud iam service-accounts delete kops-firewall-updater@${PROJECT_ID}.iam.gserviceaccount.com --quiet
 
+    gcloud iam service-accounts delete gcp-connect@${PROJECT_ID}.iam.gserviceaccount.com --quiet
+
+    gcloud iam service-accounts delete anthos-connect@${PROJECT_ID}.iam.gserviceaccount.com --quiet
 
     # Delete remaining files and folders
     echo "🗑 Finishing up."
