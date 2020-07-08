@@ -68,9 +68,7 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
     rm -r $KEY_PATH
 
     # Delete remaining files and folders
-    echo 'source $ROOT/bank-of-anthos-scripts/install/env' >> ~/.bashrc
-    echo 'source $ROOT/bank-of-anthos-scripts/install/common/install-tools.sh'
-
+    echo "🗑 Finishing up."
     rm -rf $HOME/.kube/config \
            $HOME/hybrid-sme/app-config-repo \
            $HOME/hybrid-sme/config-repo \
