@@ -54,9 +54,18 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
     echo "☁️ Deleting service accounts"
     gcloud iam service-accounts delete kops-firewall-updater@${PROJECT_ID}.iam.gserviceaccount.com --quiet
 
+    gcloud projects remove-iam-policy-binding ${PROJECT_ID} \
+    --member serviceAccount:${SERVICE_ACCOUNT_NAME}@${PROJECT_ID}.iam.gserviceaccount.com \
+    --role roles/compute.securityAdmin
+
     gcloud iam service-accounts delete gcp-connect@${PROJECT_ID}.iam.gserviceaccount.com --quiet
 
     gcloud iam service-accounts delete anthos-connect@${PROJECT_ID}.iam.gserviceaccount.com --quiet
+
+    echo "Deleting local service account key..."
+    export SERVICE_ACCOUNT_NAME="kops-firewall-updater"
+    export KEY_PATH="${WORK_DIR}/${SERVICE_ACCOUNT_NAME}-key.json"
+    rm -r $KEY_PATH
 
     # Delete remaining files and folders
     echo "🗑 Finishing up."

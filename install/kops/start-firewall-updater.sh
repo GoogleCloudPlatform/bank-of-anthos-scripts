@@ -36,7 +36,6 @@ echo "🔑 Downloading service account key..."
 gcloud iam service-accounts keys create ${KEY_PATH} \
   --iam-account ${SERVICE_ACCOUNT_NAME}@${PROJECT_ID}.iam.gserviceaccount.com
 
-
 # Kops cluster runs the firewall updater as a pod - ie. Kops updates its own firewall rule
 echo "☸️  Deploying firewall updater in kops cluster"
 kubectx onprem;
