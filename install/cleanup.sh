@@ -51,23 +51,36 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
     echo "🔄 Deleting Cloud Build trigger for app config repo"
     gcloud beta builds triggers delete trigger --quiet
 
-    echo "☁️ Deleting service accounts"
+
+    echo "🔑 Deleting Firewall updater service account..."
     gcloud iam service-accounts delete kops-firewall-updater@${PROJECT_ID}.iam.gserviceaccount.com --quiet
 
     gcloud projects remove-iam-policy-binding ${PROJECT_ID} \
     --member serviceAccount:${SERVICE_ACCOUNT_NAME}@${PROJECT_ID}.iam.gserviceaccount.com \
     --role roles/compute.securityAdmin
 
-    gcloud iam service-accounts delete gcp-connect@${PROJECT_ID}.iam.gserviceaccount.com --quiet
 
+    echo "🔑 Deleting GCP cluster Hub service account..."
+    gcloud iam service-accounts delete gcp-connect@${PROJECT_ID}.iam.gserviceaccount.com --quiet
+    SVC_ACCT_NAME="gcp-connect"
+
+    gcloud projects remove-iam-policy-binding ${PROJECT_ID} \
+    --member="serviceAccount:${SVC_ACCT_NAME}@${PROJECT_ID}.iam.gserviceaccount.com" \
+    --role="roles/gkehub.connect"
+
+    gcloud projects remove-iam-policy-binding ${PROJECT_ID} \
+    --member="serviceAccount:${SVC_ACCT_NAME}@${PROJECT_ID}.iam.gserviceaccount.com" \
+    --role="roles/gkehub.connect"
+
+
+    echo "🔑 Deleting onprem cluster Hub service account..."
     gcloud iam service-accounts delete anthos-connect@${PROJECT_ID}.iam.gserviceaccount.com --quiet
 
-    echo "Deleting local service account key..."
-    export SERVICE_ACCOUNT_NAME="kops-firewall-updater"
-    export KEY_PATH="${WORK_DIR}/${SERVICE_ACCOUNT_NAME}-key.json"
-    rm -r $KEY_PATH
+    gcloud projects remove-iam-policy-binding ${PROJECT_ID} \
+    --member="serviceAccount:anthos-connect@${PROJECT_ID}.iam.gserviceaccount.com" \
+    --role="roles/gkehub.connect"
 
-    # Delete remaining files and folders
+
     echo "🗑 Finishing up."
     rm -rf $HOME/.kube/config \
            $HOME/hybrid-sme/app-config-repo \
