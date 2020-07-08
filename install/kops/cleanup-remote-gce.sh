@@ -25,8 +25,7 @@ export ONPREM_CLUSTER_NAME=$ONPREM_CLUSTER_NAME_BASE.k8s.local
 export ONPREM_KUBECONFIG=$WORK_DIR/${ONPREM_CLUSTER_NAME_BASE}.context
 echo "kubeconfig location- ${ONPREM_KUBECONFIG}"
 
-export KOPS_STORE=gs://$PROJECT-kops-$ONPREM_CLUSTER_NAME_BASE
-
+export KOPS_STORE=gs://${PROJECT_ID}-kops-$ONPREM_CLUSTER_NAME_BASE
 
 gcloud config set project ${PROJECT_ID}
 
