@@ -28,12 +28,17 @@ export SERVICE_ACCOUNT_NAME="kops-firewall-updater"
 export KEY_PATH="${WORK_DIR}/${SERVICE_ACCOUNT_NAME}-key.json"
 
 
-# Remove the fw namespace
+echo "🚧 Manually creating fw rule to access the onprem cluster..."
+
+gcloud compute firewall-rules create https-api-onprem-k8s-local \
+    --source-ranges="0.0.0.0/0" --target-tags="onprem-k8s-local-k8s-io-role-master" --allow tcp
+
+
 echo "🧯 Removing the firewall updater namespace in the onprem cluster..."
 kubectx onprem;
 kubectl delete ns fw;
 
-# Remove the service account, role binding, and local key
+
 echo "🧽 Removing the kops-firewall-updater service account..."
 gcloud iam service-accounts delete kops-firewall-updater@${PROJECT_ID}.iam.gserviceaccount.com --quiet
 
@@ -41,10 +46,12 @@ gcloud projects remove-iam-policy-binding ${PROJECT_ID} \
 --member serviceAccount:${SERVICE_ACCOUNT_NAME}@${PROJECT_ID}.iam.gserviceaccount.com \
 --role roles/compute.securityAdmin
 
+
 echo "🗑 Removing the local service account key downloaded to Cloud Shell...."
 rm -r ${KEY_PATH}
 
-# Redeploy the firewall updater to the Kops cluster.
+
+
 echo "🌅 Redeploying the firewall updater to your environment..."
 ./kops/start-firewall-updater.sh
 
