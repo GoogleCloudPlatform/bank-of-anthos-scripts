@@ -1,6 +1,10 @@
+echo "### "
+echo "📝 Setting up BASE and WORK Directory Environment Variables"
 export ROOT=$HOME/hybrid-sme
 export BASE_DIR=$PWD
 echo $BASE_DIR
 export WORK_DIR=$BASE_DIR/workdir
 echo $WORK_DIR
 export PATH=$PATH:$WORK_DIR/bin:
+echo "✅ env setup complete."
+echo "### "
