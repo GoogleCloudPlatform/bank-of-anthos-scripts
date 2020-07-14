@@ -21,7 +21,7 @@ export GCLOUD_ACCOUNT=$(gcloud config get-value account)
 export ROOT=$HOME/hybrid-sme
 
 # Check if project setup is needed
-if [ $1 == "setup" ]
+if [ "$1" == "setup" ]
 then
   echo "☁️ Project setup"
   mkdir -p $ROOT
