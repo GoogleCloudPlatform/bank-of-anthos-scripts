@@ -14,36 +14,42 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+## Setting up Base Working Directory
+echo "BASE DIR:" $BASE_DIR
+export WORK_DIR=${WORK_DIR:="${BASE_DIR}/workdir"}
+mkdir -p $WORK_DIR/bin
+
 echo "### "
 echo "📝 Continuing set up and validating Environment Variables"
 echo "### "
 
-echo "🔍 Checking if PROJECT ID variable is correctly populated..." 
-PROJECT_ID_CHECK=$(grep '^export PROJECT_ID=""' "$ROOT/bank-of-anthos-scripts/install/common/install-tools.sh")
-#echo "PROJECT_ID_CHECK is:" $PROJECT_ID_CHECK
-if [[ ! -z "$PROJECT_ID_CHECK" ]]; then
-    echo "❗🚨 PROJECT ID variable is blank in '$ROOT/bank-of-anthos-scripts/install/common/install-tools.sh' - please edit and update!"
+echo "🔍 Checking if PROJECT ID is set as environment variable..."
+echo $GOOGLE_CLOUD_PROJECT > $WORK_DIR/gcp_proj.txt
+GCP_PROJ_FILE=$WORK_DIR/gcp_proj.txt
+#echo "GCP_PROJ_FILE = " $GCP_PROJ_FILE
+GCP_PROJ_ID=$(head -n 1 $GCP_PROJ_FILE)
+#echo "GCP_PROJ_ID = " $GCP_PROJ_ID
+if [ -z "$GCP_PROJ_ID" ]; then
+    echo "❗🚨 GOOGLE CLOUD Project ID is not known as environment variable!"
     echo "❗🚨 $ROOT/bank-of-anthos-scripts/install/common/install-tools.sh will now exit!"
+    echo "❗🚨 Please update gcloud config project before continuing, Thank you!"
     CONTINUE="NO"
     echo "CONTINUE=" $CONTINUE
-else
-echo "✅ PROJECT ID variable has been updated..."
+   else
+    echo "✅ GOOGLE PROJECT ID is already known as an environment variable"
+    GCP_PROJ_ID=$(head -n 1 $GCP_PROJ_FILE)
+    echo "👀 GOOGLE CLOUD PROJECT ID is:'$GCP_PROJ_ID'"
     CONTINUE="YES"
     echo "CONTINUE=" $CONTINUE
-fi 
+fi  
 
 if [ $CONTINUE == "YES" ]; then
 
 # Variables
-export PROJECT_ID=""  #Add your Project ID to this line
-echo "📜 Setting gcloud config project property!"
-gcloud config set project "$PROJECT_ID"
+#echo "📜 Setting gcloud config project property!"
+gcloud config set project "$GCP_PROJ_ID"
 export PROJECT=$(gcloud config get-value project)
-export WORK_DIR=${WORK_DIR:="${PWD}/workdir"}
 export EMAIL=$(gcloud config get-value account)
-
-## Install Tools
-mkdir -p $WORK_DIR/bin
 
 echo "### "
 echo "⚡️ Starting Anthos Tools install."
