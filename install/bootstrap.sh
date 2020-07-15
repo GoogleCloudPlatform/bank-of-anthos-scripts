@@ -20,6 +20,11 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
     echo "********* Welcome to the Hybrid SME Academy Labs ***************"
     echo "⚡️ Starting Anthos environment install."
     export PROJECT=$(gcloud config get-value project)
+    if [ -z $PROJECT ]
+    then
+      read -p 'Enter project id: ' PROJECT
+      gcloud config set project $PROJECT
+    fi
     export BASE_DIR=${BASE_DIR:="${PWD}"}
     export WORK_DIR=${WORK_DIR:="${BASE_DIR}/workdir"}
 
@@ -29,7 +34,11 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
     echo "🛠 Installing client tools."
     ./common/install-tools.sh
 
-    echo "🚪 Configuring Cloud Shell to re-init environment if disconnected."
+    if [ $(grep "bank-of-anthos-init" ~/.bashrc | wc -l) -eq 0 ]
+    then
+      echo "🚪 Configuring Cloud Shell to re-init environment if disconnected."
+      echo "source $ROOT/bank-of-anthos-scripts/install/bank-of-anthos-init.sh" >> ~/.bashrc
+    fi
     echo "source $ROOT/bank-of-anthos-scripts/install/env" >> ~/.bashrc
     echo "source $ROOT/bank-of-anthos-scripts/install/common/install-tools.sh" >> ~/.bashrc
 

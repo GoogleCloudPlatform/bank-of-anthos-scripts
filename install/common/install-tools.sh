@@ -16,6 +16,11 @@
 
 # Variables
 export PROJECT=$(gcloud config get-value project)
+if [ -z $PROJECT ]
+then
+  read -p 'Enter project id: ' PROJECT
+  gcloud config set project $PROJECT
+fi
 export WORK_DIR=${WORK_DIR:="${PWD}/workdir"}
 
 ## Install Tools
