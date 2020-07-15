@@ -35,8 +35,7 @@ fi
 if [ $CONTINUE == "YES" ]; then
 
 # Variables
-#export PROJECT_ID=""  #No longer needed - script testing complete
-export PROJECT_ID="carhope-sme-070720-1537"
+export PROJECT_ID=""  #Add your Project ID to this line
 echo "📜 Setting gcloud config project property!"
 gcloud config set project "$PROJECT_ID"
 export PROJECT=$(gcloud config get-value project)
