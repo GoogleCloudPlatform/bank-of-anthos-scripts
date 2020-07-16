@@ -70,13 +70,15 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
 
 
     echo "🔑 Deleting Firewall updater service account..."
-    removeServiceAccount kops-firewall-updater@${PROJECT_ID}.iam.gserviceaccount.com ${PROJECT_ID}
+    removeServiceAccount kops-firewall-updater@${PROJECT_ID}.iam.gserviceaccount.com ${PROJECT_ID} &
 
     echo "🔑 Deleting GCP cluster Hub service account..."
-    removeServiceAccount gcp-connect@${PROJECT_ID}.iam.gserviceaccount.com ${PROJECT_ID}
+    removeServiceAccount gcp-connect@${PROJECT_ID}.iam.gserviceaccount.com ${PROJECT_ID} &
 
     echo "🔑 Deleting onprem cluster Hub service account..."
-    removeServiceAccount anthos-connect@${PROJECT_ID}.iam.gserviceaccount.com ${PROJECT_ID}
+    removeServiceAccount anthos-connect@${PROJECT_ID}.iam.gserviceaccount.com ${PROJECT_ID} &
+
+    wait
 
     echo "🗑 Finishing up."
     rm -rf $HOME/.kube/config \
