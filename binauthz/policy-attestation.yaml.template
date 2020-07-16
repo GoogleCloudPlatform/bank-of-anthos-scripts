@@ -1,4 +1,6 @@
 globalPolicyEvaluationMode: ENABLE
+admissionWhitelistPatterns:
+- namePattern: docker.io/istio/*
 defaultAdmissionRule:
   evaluationMode: REQUIRE_ATTESTATION
   enforcementMode: ENFORCED_BLOCK_AND_AUDIT_LOG
