@@ -92,3 +92,14 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
 else
     echo "This has only been tested in GCP Cloud Shell.  Only Linux (debian) is supported".
 fi
+
+# aliases for kubectl
+kubectlg(){
+  kubectx gcp;
+  kubectl "${@}"
+}
+
+kubectlo(){
+  kubectx onprem;
+  kubectl "${@}"
+}
