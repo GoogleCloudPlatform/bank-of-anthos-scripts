@@ -6,5 +6,12 @@ echo $BASE_DIR
 export WORK_DIR=$BASE_DIR/workdir
 echo $WORK_DIR
 export PATH=$PATH:$WORK_DIR/bin:
+if [ -z $PROJECT ]
+then
+  read -p 'Enter project id: ' PROJECT
+  gcloud config set project $PROJECT
+fi
+export PROJECT_ID=$PROJECT
+export EMAIL=$(gcloud config get-value account)
 echo "✅ env setup complete."
 echo "### "

@@ -16,10 +16,40 @@
 
 # Variables
 
+enableAPIs() {
+  if [ "$#" -eq 0 ]; then
+    echo "Usage: $0 APIs" >&2
+    echo "e.g. $0 iam compute" >&2
+    exit 1
+  fi
+
+  echo "Required apis for this project are: $@"
+  declare -a REQ_APIS=(${@})
+
+  local ENABLED_APIS=$(gcloud services list --enabled | grep -v NAME | sort | cut -d " " -f1)
+  #echo "Current APIs enabled are: ${ENABLED_APIS}"
+
+  for api in "${REQ_APIS[@]}"
+  do
+    printf "\tChecking to see if ${api} api is enabled on this project\n"
+    local API_EXISTS=$(echo ${ENABLED_APIS} | grep ${api}.googleapis.com | wc -l)
+    if [ ${API_EXISTS} -eq 0 ]
+    then
+      echo "*** Enabling ${api} API"
+      gcloud services enable "${api}.googleapis.com"
+    fi
+  done
+}
+
 if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
     echo "********* Welcome to the Hybrid SME Academy Labs ***************"
     echo "⚡️ Starting Anthos environment install."
     export PROJECT=$(gcloud config get-value project)
+    if [ -z $PROJECT ]
+    then
+      read -p 'Enter project id: ' PROJECT
+      gcloud config set project $PROJECT
+    fi
     export BASE_DIR=${BASE_DIR:="${PWD}"}
     export WORK_DIR=${WORK_DIR:="${BASE_DIR}/workdir"}
 
@@ -29,28 +59,18 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
     echo "🛠 Installing client tools."
     ./common/install-tools.sh
 
-    echo "🚪 Configuring Cloud Shell to re-init environment if disconnected."
+    if [ $(grep "bank-of-anthos-init" ~/.bashrc | wc -l) -eq 0 ]
+    then
+      echo "🚪 Configuring Cloud Shell to re-init environment if disconnected."
+      echo "source $ROOT/bank-of-anthos-scripts/install/bank-of-anthos-init.sh" >> ~/.bashrc
+    fi
     echo "source $ROOT/bank-of-anthos-scripts/install/env" >> ~/.bashrc
     echo "source $ROOT/bank-of-anthos-scripts/install/common/install-tools.sh" >> ~/.bashrc
 
 
     echo "🔆 Enabling GCP APIs. This may take up to 5 minutes."
-    gcloud services enable \
-    container.googleapis.com \
-    compute.googleapis.com \
-    stackdriver.googleapis.com \
-    meshca.googleapis.com \
-    meshtelemetry.googleapis.com \
-    meshconfig.googleapis.com \
-    iamcredentials.googleapis.com \
-    anthos.googleapis.com \
-    cloudresourcemanager.googleapis.com \
-    gkeconnect.googleapis.com \
-    gkehub.googleapis.com \
-    serviceusage.googleapis.com \
-    sourcerepo.googleapis.com \
-    cloudbuild.googleapis.com \
-    secretmanager.googleapis.com
+    local APIS="container compute stackdriver meshca meshtelemetry meshconfig iamcredentials anthos cloudresourcemanager gkeconnect gkehub serviceusage sourcerepo cloudbuild secretmanager"
+    enableAPIs $APIS
 
     echo "☸️ Creating 2 Kubernetes clusters in parallel."
     echo -e "\nMultiple tasks are running asynchronously to setup your environment.  It may appear frozen, but you can check the logs in $WORK_DIR for additional details in another terminal window."
