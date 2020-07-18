@@ -1,7 +1,8 @@
 echo "### "
 echo "📝 Setting up BASE and WORK Directory Environment Variables"
 export ROOT=$HOME/hybrid-sme
-export BASE_DIR=$PWD
+#export BASE_DIR=$PWD #should be relative to $ROOT
+export BASE_DIR=$ROOT/bank-of-anthos-scripts/install
 echo $BASE_DIR
 export WORK_DIR=$BASE_DIR/workdir
 echo $WORK_DIR
