@@ -14,11 +14,31 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Variables
+# Variables and Functions
+removeServiceAccount() {
+  echo "🠲 Starting Removing Service Account Function"
+  KEY=$(gcloud iam service-accounts keys list --iam-account $1 --managed-by user | grep -v KEY | xargs | cut -d " " -f 1)
+  if [ ! -z ${KEY} ]
+  then
+    echo "⌦ Removing service account: ${KEY}"
+    gcloud iam service-accounts keys delete ${KEY} --iam-account $1 -q || true
+  fi
+
+  gcloud iam service-accounts delete $1 -q || true
+  roles=$(gcloud projects get-iam-policy $PROJECT --flatten="bindings[].members" --format='table(bindings.role)' --filter="bindings.members:$1" | grep -v ROLE)
+  #declare -a roles=(${SVC_ACC_ROLES})
+  for role in "${roles[@]}"
+  do
+    echo "⌦ Removing role: ${role} to service account $1"
+    gcloud projects remove-iam-policy-binding ${2} --member "serviceAccount:$1" --role "${role}" --quiet > /dev/null || true
+  done
+  echo "🠰 Finishing Removing Service Account Function"
+}
 
 if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
     export PROJECT_ID=$(gcloud config get-value project)
     export WORK_DIR=${WORK_DIR:="${PWD}/workdir"}
+    echo "WORK_DIR is " $WORK_DIR
 
     echo "🧹 Cleaning up Anthos environment in project: ${PROJECT_ID}"
     source ./env
@@ -51,43 +71,27 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
     echo "🔄 Deleting Cloud Build trigger for app config repo"
     gcloud beta builds triggers delete trigger --quiet
 
-
     echo "🔑 Deleting Firewall updater service account..."
-    gcloud iam service-accounts delete kops-firewall-updater@${PROJECT_ID}.iam.gserviceaccount.com --quiet
-
-    gcloud projects remove-iam-policy-binding ${PROJECT_ID} \
-    --member serviceAccount:${SERVICE_ACCOUNT_NAME}@${PROJECT_ID}.iam.gserviceaccount.com \
-    --role roles/compute.securityAdmin
-
+    removeServiceAccount kops-firewall-updater@${PROJECT_ID}.iam.gserviceaccount.com ${PROJECT_ID} &
 
     echo "🔑 Deleting GCP cluster Hub service account..."
-    gcloud iam service-accounts delete gcp-connect@${PROJECT_ID}.iam.gserviceaccount.com --quiet
-    SVC_ACCT_NAME="gcp-connect"
-
-    gcloud projects remove-iam-policy-binding ${PROJECT_ID} \
-    --member="serviceAccount:${SVC_ACCT_NAME}@${PROJECT_ID}.iam.gserviceaccount.com" \
-    --role="roles/gkehub.connect"
-
-    gcloud projects remove-iam-policy-binding ${PROJECT_ID} \
-    --member="serviceAccount:${SVC_ACCT_NAME}@${PROJECT_ID}.iam.gserviceaccount.com" \
-    --role="roles/gkehub.connect"
-
+    removeServiceAccount gcp-connect@${PROJECT_ID}.iam.gserviceaccount.com ${PROJECT_ID} &
 
     echo "🔑 Deleting onprem cluster Hub service account..."
-    gcloud iam service-accounts delete anthos-connect@${PROJECT_ID}.iam.gserviceaccount.com --quiet
+    removeServiceAccount anthos-connect@${PROJECT_ID}.iam.gserviceaccount.com ${PROJECT_ID} &
 
-    gcloud projects remove-iam-policy-binding ${PROJECT_ID} \
-    --member="serviceAccount:anthos-connect@${PROJECT_ID}.iam.gserviceaccount.com" \
-    --role="roles/gkehub.connect"
+    echo "🖐 Waiting for background activities to complete... 🗒 Notifications will still appear!"
+    wait
 
-
-    echo "🗑 Finishing up."
+    echo "🗑 Cleaning up Cloud Shell environment..."
     rm -rf $HOME/.kube/config \
+           $HOME/.kube/cache \
            $HOME/hybrid-sme/app-config-repo \
            $HOME/hybrid-sme/config-repo \
            $HOME/hybrid-sme/source-repo \
            $HOME/hybrid-sme/cloud-builders-community \
-           $HOME/.ssh/id_rsa.nomos.*
+           $HOME/.ssh/id_rsa.nomos.* \
+           $HOME/workdir
 
     rm -f $HOME/.customize_environment
     rm -rf $WORK_DIR

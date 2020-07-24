@@ -14,7 +14,31 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Variables
+# Variables & Functions
+enableAPIs() {
+  if [ "$#" -eq 0 ]; then
+    echo "Usage: $0 APIs" >&2
+    echo "e.g. $0 iam compute" >&2
+    exit 1
+  fi
+
+  echo "Required apis for this project are: $@"
+  declare -a REQ_APIS=(${@})
+
+  local ENABLED_APIS=$(gcloud services list --enabled | grep -v NAME | sort | cut -d " " -f1)
+  #echo "Current APIs enabled are: ${ENABLED_APIS}"
+
+  for api in "${REQ_APIS[@]}"
+  do
+    printf "\t 👀 Checking to see if ${api} api is enabled on this project\n"
+    local API_EXISTS=$(echo ${ENABLED_APIS} | grep ${api}.googleapis.com | wc -l)
+    if [ ${API_EXISTS} -eq 0 ]
+    then
+      echo "***💡 Enabling ${api} API"
+      gcloud services enable "${api}.googleapis.com"
+    fi
+  done
+}
 
 if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
     echo "********* Welcome to the Hybrid SME Academy Labs ***************"
@@ -26,31 +50,36 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
     echo "WORK_DIR set to $WORK_DIR"
     gcloud config set project $PROJECT
 
-    echo "🛠 Installing client tools."
-    ./common/install-tools.sh
+    #Looking for SME_BASE_INST run evidence
+    echo "👀 Looking if SME_BASE_INST has been updated."
+    echo "SME_BASE_INST:" $SME_BASE_INST
+    if [ -n "$SME_BASE_INST" ]; then
+        echo "✅ env SME_BASE_INST environment value is already present - skipping"
+    else
+        echo "🖝 env SME_BASE_INST environment value is not present - continuing"
+        ./common/install-tools.sh
+    fi
 
+    #Additional if statements to avoid repeated additions of lines to ~/.bashrc
     echo "🚪 Configuring Cloud Shell to re-init environment if disconnected."
-    echo "source $ROOT/bank-of-anthos-scripts/install/env" >> ~/.bashrc
-    echo "source $ROOT/bank-of-anthos-scripts/install/common/install-tools.sh" >> ~/.bashrc
-
+    BASHRC_UPDATED="$(grep /bank-of-anthos-scripts/install/env ~/.bashrc)"
+    if [ -n "$BASHRC_UPDATED" ]; then
+        echo "✅ env init string is already present - skipping"
+    else
+        echo "🖝 env init string is not present - adding"
+        echo "source $ROOT/bank-of-anthos-scripts/install/env" >> ~/.bashrc 
+    fi
+    BASHRC_UPDATED="$(grep /bank-of-anthos-scripts/install/common ~/.bashrc)"
+    if [ -n "$BASHRC_UPDATED" ]; then
+        echo "✅ install-tools init string is already present - skipping"
+    else
+        echo "🖝 install-tools init string is not present - adding"
+        echo "source $ROOT/bank-of-anthos-scripts/install/common/install-tools.sh" >> ~/.bashrc 
+    fi
 
     echo "🔆 Enabling GCP APIs. This may take up to 5 minutes."
-    gcloud services enable \
-    container.googleapis.com \
-    compute.googleapis.com \
-    stackdriver.googleapis.com \
-    meshca.googleapis.com \
-    meshtelemetry.googleapis.com \
-    meshconfig.googleapis.com \
-    iamcredentials.googleapis.com \
-    anthos.googleapis.com \
-    cloudresourcemanager.googleapis.com \
-    gkeconnect.googleapis.com \
-    gkehub.googleapis.com \
-    serviceusage.googleapis.com \
-    sourcerepo.googleapis.com \
-    cloudbuild.googleapis.com \
-    secretmanager.googleapis.com
+    APIS="container compute stackdriver meshca meshtelemetry meshconfig iamcredentials anthos cloudresourcemanager gkeconnect gkehub serviceusage sourcerepo cloudbuild secretmanager"
+    enableAPIs $APIS
 
     echo "☸️ Creating 2 Kubernetes clusters in parallel."
     echo -e "\nMultiple tasks are running asynchronously to setup your environment.  It may appear frozen, but you can check the logs in $WORK_DIR for additional details in another terminal window."
@@ -63,6 +92,7 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
     ./common/connect-kops-remote.sh
 
     # configure Kops firewall rules + continually allow Kops kubectl access
+    echo "🔥🧱🗘 Configuring Firewall and continual Kops Kubectl access."
     ./kops/start-firewall-updater.sh
 
     # install service mesh: Istio, replicated control plane multicluster
@@ -92,3 +122,14 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
 else
     echo "This has only been tested in GCP Cloud Shell.  Only Linux (debian) is supported".
 fi
+
+# aliases for kubectl
+kubectlg(){
+  kubectx gcp;
+  kubectl "${@}"
+}
+
+kubectlo(){
+  kubectx onprem;
+  kubectl "${@}"
+}

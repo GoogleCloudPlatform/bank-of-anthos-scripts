@@ -23,20 +23,29 @@ echo "### "
 echo "📝 Continuing set up and validating Environment Variables"
 echo "### "
 
-echo "🔍 Checking if PROJECT ID is set as environment variable..."
+echo "🔍 Checking if GOOGLE CLOUD PROJECT ID is a set environment variable..."
 echo $GOOGLE_CLOUD_PROJECT > $WORK_DIR/gcp_proj.txt
 GCP_PROJ_FILE=$WORK_DIR/gcp_proj.txt
 #echo "GCP_PROJ_FILE = " $GCP_PROJ_FILE
 GCP_PROJ_ID=$(head -n 1 $GCP_PROJ_FILE)
 #echo "GCP_PROJ_ID = " $GCP_PROJ_ID
 if [ -z "$GCP_PROJ_ID" ]; then
-    echo "❗🚨 GOOGLE CLOUD Project ID is not known as environment variable!"
-    echo "❗🚨 $ROOT/bank-of-anthos-scripts/install/common/install-tools.sh will now exit!"
-    echo "❗🚨 Please update gcloud config project before continuing, Thank you!"
-    CONTINUE="NO"
-    echo "CONTINUE=" $CONTINUE
+    echo "❗🚨 GOOGLE CLOUD PROJECT ID is not a known environment variable!"
+    read -p 'Please enter the GOOGLE CLOUD PROJECT ID: ' GCP_PROJ_ID
+    if [ -z "$GCP_PROJ_ID" ]; then
+     echo "❗🚨 GOOGLE CLOUD PROJECT ID is still not a known environment variable!"
+     echo "❗🚨 $ROOT/bank-of-anthos-scripts/install/common/install-tools.sh will now exit!"
+     echo "❗🚨 Please update gcloud config project before continuing, Thank you!"
+     CONTINUE="NO"
+     echo "CONTINUE=" $CONTINUE
+    else
+     echo $GCP_PROJ_ID > $WORK_DIR/gcp_proj.txt
+     echo "👀 GOOGLE CLOUD PROJECT ID is:'$GCP_PROJ_ID'"
+     CONTINUE="YES"
+     echo "CONTINUE=" $CONTINUE
+    fi
    else
-    echo "✅ GOOGLE PROJECT ID is already known as an environment variable"
+    echo "✅ GOOGLE CLOUD PROJECT ID is already a known environment variable"
     GCP_PROJ_ID=$(head -n 1 $GCP_PROJ_FILE)
     echo "👀 GOOGLE CLOUD PROJECT ID is:'$GCP_PROJ_ID'"
     CONTINUE="YES"
@@ -99,6 +108,9 @@ echo "🗒 Updating Tool Install Log."
 touch $WORK_DIR/install.log
 NOW=$(date +'%d-%b-%Y')
 echo "Anthos Tools install completed on:"$NOW  > $WORK_DIR/install.log
+echo "Updating SME_BASE_INST"
+export SME_BASE_INST=true
+echo $SME_BASE_INST
 echo "✅ Anthos Tools install complete."
 
 else

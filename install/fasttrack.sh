@@ -21,7 +21,7 @@ export GCLOUD_ACCOUNT=$(gcloud config get-value account)
 export ROOT=$HOME/hybrid-sme
 
 # Check if project setup is needed
-if [ $1 == "setup" ]
+if [ "$1" == "setup" ]
 then
   echo "☁️ Project setup"
   mkdir -p $ROOT
@@ -36,7 +36,15 @@ fi
 
 cd $ROOT; cd bank-of-anthos-scripts/install/
 source ./env
-source ./common/install-tools.sh
+#Looking for SME_BASE_INST run evidence
+    echo "👀 Looking if SME_BASE_INST has been updated."
+    echo "SME_BASE_INST:" $SME_BASE_INST
+    if [ -n "$SME_BASE_INST" ]; then
+        echo "✅ env SME_BASE_INST environment value is already present - skipping"
+    else
+        echo "🖝 env SME_BASE_INST environment value is not present - continuing"
+        source ./common/install-tools.sh
+    fi    
 
 echo "🚀 Running bootstrap script - this will take about 10 minutes."
 ./bootstrap.sh
