@@ -20,8 +20,10 @@ export PROJECT=$(gcloud config get-value project)
 export PROJECT_ID=${PROJECT}
 export WORK_DIR=${WORK_DIR:="`pwd`/workdir"}
 
-export CLUSTER_NAME="gcp"
-export CLUSTER_ZONE="us-central1-b"
+#export CLUSTER_NAME="gcp"
+#export CLUSTER_ZONE="us-central1-b"
+export CLUSTER_NAME=$1
+export CLUSTER_ZONE=$2
 
 # unregister cluster from Anthos hub
 echo "☸️ Unregistering gcp cluster from Hub..."

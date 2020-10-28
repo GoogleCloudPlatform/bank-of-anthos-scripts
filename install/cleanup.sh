@@ -15,6 +15,12 @@
 # limitations under the License.
 
 # Variables
+# adding session variable for 2 GKE cluster
+    export CLUSTER1="gcp"
+    export ZONE1="us-central1-b"
+    export CLUSTER2="onprem"
+    export ZONE2="us-west4-b"
+
 removeServiceAccount() {
   echo "Removing Service Account"
   KEY=$(gcloud iam service-accounts keys list --iam-account $1 --managed-by user | grep -v KEY | xargs | cut -d " " -f 1)
@@ -47,8 +53,10 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
 
 
     echo "☁️ Removing Kubernetes clusters from your project. This may take a few minutes ."
-    ./kops/cleanup-remote-gce.sh &> ${WORK_DIR}/cleanup-remote.log &
-    ./gke/cleanup-gke.sh &> ${WORK_DIR}/cleanup-gke.log &
+    #./kops/cleanup-remote-gce.sh &> ${WORK_DIR}/cleanup-remote.log &
+    #./gke/cleanup-gke.sh &> ${WORK_DIR}/cleanup-gke.log &
+    ./gke/cleanup-gke.sh ${CLUSTER1} ${ZONE1} &> ${WORK_DIR}/cleanup-gke.log &
+    ./gke/cleanup-gke.sh ${CLUSTER2} ${ZONE2} &> ${WORK_DIR}/cleanup-remote.log &
     wait
 
     echo "🔥 Cleaning up forwarding and firewall rules."
@@ -69,8 +77,8 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
     gcloud beta builds triggers delete trigger --quiet
 
 
-    echo "🔑 Deleting Firewall updater service account..."
-    removeServiceAccount kops-firewall-updater@${PROJECT_ID}.iam.gserviceaccount.com ${PROJECT_ID} &
+    #echo "🔑 Deleting Firewall updater service account..."
+    #removeServiceAccount kops-firewall-updater@${PROJECT_ID}.iam.gserviceaccount.com ${PROJECT_ID} &
 
     echo "🔑 Deleting GCP cluster Hub service account..."
     removeServiceAccount gcp-connect@${PROJECT_ID}.iam.gserviceaccount.com ${PROJECT_ID} &

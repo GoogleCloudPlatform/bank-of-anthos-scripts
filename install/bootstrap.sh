@@ -55,24 +55,34 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
     sourcerepo.googleapis.com \
     cloudbuild.googleapis.com \
     secretmanager.googleapis.com
+    
+    # adding session variable for 2 GKE cluster
+    export CLUSTER1="gcp"
+    export ZONE1="us-central1-b"
+    export CLUSTER2="onprem"
+    export ZONE2="us-west4-b"
 
     echo "☸️ Creating 2 Kubernetes clusters in parallel."
     echo -e "\nMultiple tasks are running asynchronously to setup your environment.  It may appear frozen, but you can check the logs in $WORK_DIR for additional details in another terminal window."
-    ./gke/provision-gke.sh &> ${WORK_DIR}/provision-gke.log &
-    ./kops/provision-remote-gce.sh &> ${WORK_DIR}/provision-remote.log &
+    #./gke/provision-gke.sh &> ${WORK_DIR}/provision-gke.log &
+    ./gke/provision-gke.sh ${CLUSTER1} ${ZONE1} &> ${WORK_DIR}/provision-gke.log &
+    ./gke/provision-gke.sh ${CLUSTER2} ${ZONE2} &> ${WORK_DIR}/provision-gke.log &
+    #./kops/provision-remote-gce.sh &> ${WORK_DIR}/provision-remote.log &
     wait
-
+    
     # generate kops kubecfg
-    echo "🎢 Finishing Kops setup, creating kubeconfig."
-    ./common/connect-kops-remote.sh
+    #echo "🎢 Finishing Kops setup, creating kubeconfig."
+    #./common/connect-kops-remote.sh
 
     # configure Kops firewall rules + continually allow Kops kubectl access
-    ./kops/start-firewall-updater.sh
+    #./kops/start-firewall-updater.sh
 
     # install service mesh: Istio, replicated control plane multicluster
     echo "🕸 Installing service mesh on both clusters."
-    CONTEXT="gcp" ./istio/install_istio.sh
-    CONTEXT="onprem" ./istio/install_istio.sh
+    #CONTEXT="gcp" ./istio/install_istio.sh
+    #CONTEXT="onprem" ./istio/install_istio.sh
+    CONTEXT=${CLUSTER1} ./istio/install_istio.sh
+    CONTEXT=${CLUSTER2} ./istio/install_istio.sh
 
     # configure DNS stubdomains for cross-cluster service name resolution
     echo "🌏 Connecting the 2 Istio control planes into one mesh."
@@ -80,8 +90,10 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
 
     # ACM pre-install
     echo "🐙 Installing Anthos Config Management on both clusters."
-    kubectx gcp && ./acm/install-config-operator.sh
-    kubectx onprem && ./acm/install-config-operator.sh
+    #kubectx gcp && ./acm/install-config-operator.sh
+    #kubectx onprem && ./acm/install-config-operator.sh
+    kubectx ${CLUSTER1} && ./acm/install-config-operator.sh
+    kubectx ${CLUSTER2} && ./acm/install-config-operator.sh
 
     # Cloud Build setup
     echo "🔄 Setting up Cloud Build for later."
@@ -89,8 +101,10 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
 
     # install GKE connect on both clusters / print onprem login token
     echo "⬆️ Installing GKE Connect on both clusters."
-    ./gke/connect-hub.sh
-    ./kops/connect-hub.sh
+    #./gke/connect-hub.sh
+    #./kops/connect-hub.sh
+    ./gke/connect-hub.sh ${CLUSTER1} ${ZONE1}
+    ./gke/connect-hub.sh ${CLUSTER2} ${ZONE2}
 
     echo "✅ Bootstrap script complete."
 else

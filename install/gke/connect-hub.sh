@@ -19,9 +19,11 @@ export PROJECT=$(gcloud config get-value project)
 export PROJECT_ID=${PROJECT}
 export WORK_DIR=${WORK_DIR:="${PWD}/workdir"}
 
-export CLUSTER_NAME="gcp"
-export CLUSTER_ZONE="us-central1-b"
-export CLUSTER_KUBECONFIG=$WORK_DIR/central.context
+#export CLUSTER_NAME="gcp"
+#export CLUSTER_ZONE="us-central1-b"
+export CLUSTER_NAME=$1
+export CLUSTER_ZONE=$2
+export CLUSTER_KUBECONFIG=$WORK_DIR/${CLUSTER_NAME}/central.context
 
 export USER="`whoami`@google.com"
 export SVC_ACCT_NAME="${CLUSTER_NAME}-connect"
