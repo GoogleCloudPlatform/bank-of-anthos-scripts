@@ -25,7 +25,8 @@ export CLUSTER_NAME=$1
 export CLUSTER_ZONE=$2
 export CLUSTER_KUBECONFIG=$WORK_DIR/${CLUSTER_NAME}/central.context
 
-export USER="`whoami`@google.com"
+#export USER="`whoami`@google.com"
+export USER="`whoami`@qwiklabs.net"
 export SVC_ACCT_NAME="${CLUSTER_NAME}-connect"
 export LOCAL_KEY_PATH="./workdir/${SVC_ACCT_NAME}"
 
