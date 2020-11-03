@@ -58,16 +58,16 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
 
     echo "☸️ Creating 2 Kubernetes clusters in parallel."
     echo -e "\nMultiple tasks are running asynchronously to setup your environment.  It may appear frozen, but you can check the logs in $WORK_DIR for additional details in another terminal window."
-    ./gke/provision-gke.sh &> ${WORK_DIR}/provision-gke.log &
-    ./kops/provision-remote-gce.sh &> ${WORK_DIR}/provision-remote.log &
+    ./gke/provision-gke.sh gcp &> ${WORK_DIR}/provision-gke1.log &
+    ./gke/provision-gke.sh onprem &> ${WORK_DIR}/provision-gke2.log &
     wait
 
     # generate kops kubecfg
-    echo "🎢 Finishing Kops setup, creating kubeconfig."
-    ./common/connect-kops-remote.sh
+    #echo "🎢 Finishing Kops setup, creating kubeconfig."
+    #./common/connect-kops-remote.sh
 
     # configure Kops firewall rules + continually allow Kops kubectl access
-    ./kops/start-firewall-updater.sh
+    #./kops/start-firewall-updater.sh
 
     # install service mesh: Istio, replicated control plane multicluster
     echo "🕸 Installing service mesh on both clusters."

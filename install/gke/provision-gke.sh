@@ -21,7 +21,7 @@ export PROJECT_NUMBER=$(gcloud projects describe ${PROJECT_ID} --format="value(p
 export WORK_DIR=${WORK_DIR:="${PWD}/workdir"}
 
 
-export CLUSTER="gcp"
+export CLUSTER=$1
 export ZONE="us-central1-b"
 export CLUSTER_KUBECONFIG=$WORK_DIR/central.context
 
