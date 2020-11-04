@@ -1,4 +1,4 @@
-# Bank of Anthos - Scripts
+# Bank of Anthos - Scripts - Lab 3
 
 This repository contains sample scripts and YAML files for [Anthos](https://cloud.google.com/anthos) demos, based on the [Bank of Anthos](https://github.com/GoogleCloudPlatform/bank-of-anthos) sample application.
 
