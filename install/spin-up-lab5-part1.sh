@@ -18,6 +18,11 @@ export ROOT=$HOME/hybrid-sme
 
 echo "👋 Welcome back to the Hybrid SME Academy labs."
 
+# creating keys if they do not not exist
+mkdir ~/.ssh
+if [ $(ls -1 ~/.ssh | grep id_rsa.sme | wc -l) != 2 ]; then ssh-keygen -b 2048 -t rsa -f ~/.ssh/id_rsa.sme -q -N ""; fi
+
+
 echo "🏔 Lab 1 - Begin Fast Track"
 echo "⏰ This script will bootstrap an Anthos environment for you."
 
@@ -140,8 +145,4 @@ kubectlo(){
 #End of bootstrap script
 
 echo "🐙 Bootstrap done! Set up ACM config repo..."
-
-# creating keys if they do not not exist
-
-if [ $(ls -1 ~/.ssh | grep id_rsa.sme | wc -l) != 2 ]; then ssh-keygen -b 2048 -t rsa -f ~/.ssh/id_rsa.sme -q -N ""; fi
 
