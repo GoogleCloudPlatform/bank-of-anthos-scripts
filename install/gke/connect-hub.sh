@@ -23,7 +23,8 @@ export CLUSTER_NAME="gcp"
 export CLUSTER_ZONE="us-central1-b"
 export CLUSTER_KUBECONFIG=$WORK_DIR/central.context
 
-export USER="`whoami`@google.com"
+#export USER="`whoami`@google.com"
+export USER=$(gcloud config get-value account)
 export SVC_ACCT_NAME="${CLUSTER_NAME}-connect"
 export LOCAL_KEY_PATH="./workdir/${SVC_ACCT_NAME}"
 
