@@ -16,6 +16,12 @@ export PROJECT_ID=$(gcloud config get-value project)
 export EMAIL=$(gcloud config get-value account)
 export ROOT=$HOME/hybrid-sme
 
+
+# creating keys if they do not not exist
+mkdir ~/.ssh
+if [ $(ls -1 ~/.ssh | grep id_rsa.sme | wc -l) != 2 ]; then ssh-keygen -b 2048 -t rsa -f ~/.ssh/id_rsa.sme -q -N ""; fi
+
+
 echo "👋 Welcome back to the Hybrid SME Academy labs."
 
 cd $ROOT/bank-of-anthos-scripts/install/
