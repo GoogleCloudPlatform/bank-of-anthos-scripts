@@ -18,6 +18,9 @@ export ROOT=$HOME/hybrid-sme
 
 echo "👋 Welcome back to the Hybrid SME Academy labs."
 
+git config --global user.email $EMAIL
+git config --global user.name $EMAIL
+
 # creating keys if they do not not exist
 mkdir ~/.ssh
 if [ $(ls -1 ~/.ssh | grep id_rsa.sme | wc -l) != 2 ]; then ssh-keygen -b 2048 -t rsa -f ~/.ssh/id_rsa.sme -q -N ""; fi
