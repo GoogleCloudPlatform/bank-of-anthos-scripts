@@ -18,8 +18,8 @@ export ROOT=$HOME/hybrid-sme
 
 echo "👋 Welcome back to the Hybrid SME Academy labs."
 
-git config --global user.email $EMAIL
-git config --global user.name $EMAIL
+#git config --global user.email $EMAIL
+#git config --global user.name $EMAIL
 
 # creating keys if they do not not exist
 mkdir ~/.ssh
@@ -55,7 +55,7 @@ echo "🚀 Running bootstrap script - this will take about 10 minutes."
 
 if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
     echo "********* Welcome to the Hybrid SME Academy Labs ***************"
-    echo "⚡️ Starting Anthos environment install."
+    echo "⚡ Starting Anthos environment install."
     export PROJECT=$(gcloud config get-value project)
     export BASE_DIR=${BASE_DIR:="${PWD}"}
     export WORK_DIR=${WORK_DIR:="${BASE_DIR}/workdir"}
@@ -69,7 +69,7 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
     echo "🚪 Configuring Cloud Shell to re-init environment if disconnected."
     if grep -Fxq "source $ROOT/bank-of-anthos-scripts/install/env" ~/.bashrc
        then
-	 echo ".bashrc additions found, already configured."
+         echo ".bashrc additions found, already configured."
        else
          echo "source $ROOT/bank-of-anthos-scripts/install/env" >> ~/.bashrc
          echo "source $ROOT/bank-of-anthos-scripts/install/common/install-tools.sh" >> ~/.bashrc
@@ -148,4 +148,3 @@ kubectlo(){
 #End of bootstrap script
 
 echo "🐙 Bootstrap done! Set up ACM config repo..."
-
