@@ -58,3 +58,5 @@ kubectl create clusterrolebinding cluster-admin-binding \
   --user="$(gcloud config get-value core/account)"
 
 kubectl get pod -n istio-system
+
+#TO DO - Put in check to ensure ASM installed correctly
