@@ -71,12 +71,14 @@ if [[ $OSTYPE == "linux-gnu" && $CLOUD_SHELL == true ]]; then
 
     # install service mesh: Istio, replicated control plane multicluster
     echo "🕸 Installing service mesh on both clusters."
-    CONTEXT="gcp" ./istio/install_istio.sh
-    CONTEXT="onprem" ./istio/install_istio.sh
+    #CONTEXT="gcp" ./istio/install_istio.sh
+    CONTEXT="gcp" ./istio/install_asm_17.sh
+    #CONTEXT="onprem" ./istio/install_istio.sh
+    CONTEXT="onprem" ./istio/install_asm_17.sh
 
     # configure DNS stubdomains for cross-cluster service name resolution
     echo "🌏 Connecting the 2 Istio control planes into one mesh."
-    ./istio/coredns.sh
+    #./istio/coredns.sh - Not needed for ASM
 
     # ACM pre-install
     echo "🐙 Installing Anthos Config Management on both clusters."
