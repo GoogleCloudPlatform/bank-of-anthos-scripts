@@ -43,11 +43,14 @@ kubectl create secret generic git-creds \
 --namespace=config-management-system \
 --from-file=ssh=$HOME/.ssh/id_rsa.sme
 
+echo "Enable config management feature in the hub"
+gcloud alpha container hub config-management enable
+
 echo "⬇️ Creating ConfigManagement CRD in both clusters..."
 export ONPREM=onprem
 export GCP=gcp
 export BASE_DIR=$ROOT/bank-of-anthos-scripts/install
-SSH_REPO_URL=ssh://${GCLOUD_ACCOUNT}@source.developers.google.com:2022/p/${PROJECT_ID}/r/config-repo
+SSH_REPO_URL=ssh://${EMAIL}@source.developers.google.com:2022/p/${PROJECT_ID}/r/config-repo
 
 kubectx $ONPREM
 cat $BASE_DIR/acm/config_sync.yaml | \
