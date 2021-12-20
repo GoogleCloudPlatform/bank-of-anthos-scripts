@@ -1,4 +1,4 @@
-# Copyright 2019 Google LLC
+# Copyright 2021 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -81,4 +81,17 @@ spec:
             path: privatekey
           - key: jwtRS256.key.pub
             path: publickey
-
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: userservice
+  namespace: boa
+spec:
+  type: ClusterIP
+  selector:
+    app: userservice
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080

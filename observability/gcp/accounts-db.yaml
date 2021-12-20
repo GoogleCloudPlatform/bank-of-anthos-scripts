@@ -1,4 +1,4 @@
-# Copyright 2019 Google LLC
+# Copyright 2021 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -33,7 +33,6 @@ spec:
         app: accounts-db
         tier: db
     spec:
-      serviceAccountName: default
       containers:
       - name: accounts-db
         image: gcr.io/bank-of-anthos-ci/accounts-db:v0.5.2
