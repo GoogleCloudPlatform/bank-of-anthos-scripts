@@ -1,7 +1,6 @@
 globalPolicyEvaluationMode: ENABLE
 admissionWhitelistPatterns:
 - namePattern: gcr.io/bank-of-anthos-ci/*
-- namePattern: gcr.io/bank-of-anthos/*
 - namePattern: docker.io/istio/*
 defaultAdmissionRule:
   evaluationMode: ALWAYS_DENY

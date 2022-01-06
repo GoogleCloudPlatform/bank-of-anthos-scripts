@@ -35,7 +35,7 @@ spec:
       terminationGracePeriodSeconds: 5
       containers:
       - name: front
-        image: gcr.io/bank-of-anthos/frontend:observability
+        image: gcr.io/bank-of-anthos-ci/sme-labs-2020/frontend:observability
         volumeMounts:
         - name: publickey
           mountPath: "/root/.ssh"
