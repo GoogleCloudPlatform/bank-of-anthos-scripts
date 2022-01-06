@@ -18,7 +18,7 @@ metadata:
   name: environment-config
   namespace: boa
 data:
-  LOCAL_ROUTING_NUM: "123456789"
+  LOCAL_ROUTING_NUM: "883745000"
   PUB_KEY_PATH: "/root/.ssh/publickey"
 ---
 apiVersion: v1
@@ -65,3 +65,14 @@ data:
   POSTGRES_USER: accounts-admin
   POSTGRES_PASSWORD: accounts-pwd
   ACCOUNTS_DB_URI: postgresql://accounts-admin:accounts-pwd@accounts-db:5432/accounts-db
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: demo-data-config
+  namespace: boa
+data:
+  USE_DEMO_DATA: "True"
+  DEMO_LOGIN_USERNAME: "testuser"
+  # All demo user accounts are hardcoded to use the login password 'password'
+  DEMO_LOGIN_PASSWORD: "password"

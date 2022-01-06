@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: main
-        image: gcr.io/bank-of-anthos/kops-firewall-updater:latest
+        image: gcr.io/bank-of-anthos-ci/sme-labs-2020/kops-firewall-updater:latest
         imagePullPolicy: Always
         env:
         - name: PROJECT_ID

@@ -1,4 +1,4 @@
-# Copyright 2019 Google LLC
+# Copyright 2021 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -28,17 +28,21 @@ spec:
     spec:
       terminationGracePeriodSeconds: 5
       containers:
-      - name: history
-        image: gcr.io/bank-of-anthos/transactionhistory:v0.2.0
+      - name: transactionhistory
+        image: gcr.io/bank-of-anthos-ci/transactionhistory:v0.5.2
         volumeMounts:
         - name: publickey
           mountPath: "/root/.ssh"
           readOnly: true
         env:
         - name: VERSION
-          value: "v0.2.0"
+          value: "v0.5.2"
         - name: PORT
           value: "8080"
+        - name: ENABLE_TRACING
+          value: "true"
+        - name: ENABLE_METRICS
+          value: "true"
         - name: POLL_MS
           value: "100"
         - name: CACHE_SIZE
@@ -52,6 +56,14 @@ spec:
           value: "-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
         #- name: EXTRA_LATENCY_MILLIS
         #  value: "5000"
+        # Valid levels are debug, info, warn, error, fatal.
+        # If no valid level is set, will default to info.
+        - name: LOG_LEVEL
+          value: "info"
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
         envFrom:
         - configMapRef:
             name: environment-config
@@ -69,14 +81,16 @@ spec:
           httpGet:
             path: /ready
             port: 8080
-          initialDelaySeconds: 5
+          initialDelaySeconds: 60
           periodSeconds: 5
+          timeoutSeconds: 10
         livenessProbe:
           httpGet:
             path: /healthy
             port: 8080
           initialDelaySeconds: 120
           periodSeconds: 5
+          timeoutSeconds: 10
       volumes:
       - name: publickey
         secret:
